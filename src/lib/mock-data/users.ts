@@ -160,8 +160,12 @@ export const agentUsers = mockUsers.filter(u => u.role === 'agent');
 export const regularUsers = mockUsers.filter(u => u.role === 'user');
 
 // Demo credentials for login (Indian format)
+// Note: These must match the generated users above
+// Admin: adminNames[0] = Rajesh Sharma
+// Agent: indianFirstNames[(0+5)] = Pooja, indianLastNames[(0+3)] = Verma
+// User: indianFirstNames[0] = Rahul, indianLastNames[(0+7)] = Pandey
 export const demoCredentials = {
     admin: { email: 'rajesh.sharma@kyc-admin.in', password: 'admin123' },
-    agent: { email: 'sneha.patil@kyc-agents.in', password: 'agent123' },
-    user: { email: 'rahul.sharma@gmail.com', password: 'user123' },
+    agent: { email: 'pooja.verma@kyc-agents.in', password: 'agent123' },
+    user: { email: 'rahul.pandey@gmail.com', password: 'user123' },
 };
