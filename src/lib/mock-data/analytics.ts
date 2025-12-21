@@ -2,6 +2,7 @@ import { DailyMetrics, RegionalStats, DashboardKPIs, AgentKPIs, AdminKPIs, Activ
 import { mockUsers, regularUsers } from './users';
 import { mockAgents, onlineAgents } from './agents';
 import { mockKYCRecords, pendingRecords, verifiedRecords, failedRecords } from './kyc-records';
+import { formatIndianNumber, formatIndianCurrency } from '@/lib/utils/indian-format';
 
 // Generate 30 days of metrics
 function generateDailyMetrics(): DailyMetrics[] {
@@ -34,18 +35,27 @@ function generateDailyMetrics(): DailyMetrics[] {
 
 export const dailyMetrics = generateDailyMetrics();
 
-// Regional statistics
+// Indian State-wise Statistics (replacing country-based)
 export const regionalStats: RegionalStats[] = [
-    { region: 'North America', country: 'United States', verifications: 3500, successRate: 92.5, avgTime: 185, lat: 39.8283, lng: -98.5795 },
-    { region: 'North America', country: 'Canada', verifications: 890, successRate: 94.2, avgTime: 172, lat: 56.1304, lng: -106.3468 },
-    { region: 'Europe', country: 'United Kingdom', verifications: 2100, successRate: 91.8, avgTime: 195, lat: 55.3781, lng: -3.4360 },
-    { region: 'Europe', country: 'Germany', verifications: 1800, successRate: 93.1, avgTime: 178, lat: 51.1657, lng: 10.4515 },
-    { region: 'Europe', country: 'France', verifications: 1200, successRate: 89.7, avgTime: 201, lat: 46.2276, lng: 2.2137 },
-    { region: 'Asia Pacific', country: 'India', verifications: 4200, successRate: 88.5, avgTime: 215, lat: 20.5937, lng: 78.9629 },
-    { region: 'Asia Pacific', country: 'Japan', verifications: 980, successRate: 95.3, avgTime: 162, lat: 36.2048, lng: 138.2529 },
-    { region: 'Asia Pacific', country: 'Australia', verifications: 720, successRate: 93.8, avgTime: 175, lat: -25.2744, lng: 133.7751 },
-    { region: 'South America', country: 'Brazil', verifications: 1500, successRate: 86.2, avgTime: 225, lat: -14.2350, lng: -51.9253 },
-    { region: 'Middle East', country: 'UAE', verifications: 650, successRate: 94.5, avgTime: 168, lat: 23.4241, lng: 53.8478 },
+    // Top states by KYC volume
+    { region: 'West', country: 'Maharashtra', verifications: 45000, successRate: 94.2, avgTime: 185, lat: 19.076, lng: 72.8777 },
+    { region: 'South', country: 'Karnataka', verifications: 38000, successRate: 95.1, avgTime: 172, lat: 12.9716, lng: 77.5946 },
+    { region: 'North', country: 'Delhi', verifications: 35000, successRate: 93.8, avgTime: 195, lat: 28.6139, lng: 77.209 },
+    { region: 'South', country: 'Tamil Nadu', verifications: 32000, successRate: 94.5, avgTime: 178, lat: 13.0827, lng: 80.2707 },
+    { region: 'South', country: 'Telangana', verifications: 28000, successRate: 93.2, avgTime: 188, lat: 17.385, lng: 78.4867 },
+    { region: 'North', country: 'Uttar Pradesh', verifications: 25000, successRate: 91.5, avgTime: 210, lat: 26.8467, lng: 80.9462 },
+    { region: 'West', country: 'Gujarat', verifications: 22000, successRate: 94.8, avgTime: 175, lat: 23.0225, lng: 72.5714 },
+    { region: 'East', country: 'West Bengal', verifications: 18000, successRate: 92.3, avgTime: 198, lat: 22.5726, lng: 88.3639 },
+    { region: 'North', country: 'Rajasthan', verifications: 15000, successRate: 90.8, avgTime: 205, lat: 26.9124, lng: 75.7873 },
+    { region: 'North', country: 'Haryana', verifications: 14000, successRate: 93.5, avgTime: 182, lat: 28.4595, lng: 77.0266 },
+    { region: 'North', country: 'Punjab', verifications: 12000, successRate: 94.0, avgTime: 178, lat: 30.901, lng: 75.8573 },
+    { region: 'South', country: 'Kerala', verifications: 11000, successRate: 96.2, avgTime: 162, lat: 9.9312, lng: 76.2673 },
+    { region: 'North', country: 'Madhya Pradesh', verifications: 9500, successRate: 91.0, avgTime: 215, lat: 23.2599, lng: 77.4126 },
+    { region: 'East', country: 'Bihar', verifications: 8000, successRate: 88.5, avgTime: 225, lat: 25.5941, lng: 85.1376 },
+    { region: 'East', country: 'Jharkhand', verifications: 6000, successRate: 89.2, avgTime: 218, lat: 23.3441, lng: 85.3096 },
+    { region: 'East', country: 'Odisha', verifications: 5500, successRate: 90.5, avgTime: 208, lat: 20.2961, lng: 85.8245 },
+    { region: 'North-East', country: 'Assam', verifications: 4000, successRate: 91.8, avgTime: 195, lat: 26.1445, lng: 91.7362 },
+    { region: 'South', country: 'Andhra Pradesh', verifications: 9000, successRate: 93.0, avgTime: 188, lat: 16.5062, lng: 80.648 },
 ];
 
 // Dashboard KPIs
@@ -150,7 +160,7 @@ export function getAdminKPIs(): AdminKPIs {
     };
 }
 
-// Activity feed
+// Activity feed with Indian context
 function generateActivityFeed(): ActivityItem[] {
     const types: ActivityType[] = [
         'verification_completed',
@@ -225,4 +235,17 @@ export function getVerificationTrends(days: number = 30) {
         failed: m.failedVerifications,
         total: m.totalVerifications,
     }));
+}
+
+// Get top Indian states by verifications
+export function getTopStates(count: number = 10) {
+    return [...regionalStats]
+        .sort((a, b) => b.verifications - a.verifications)
+        .slice(0, count);
+}
+
+// Get total verifications (for display with Indian formatting)
+export function getTotalVerifications(): string {
+    const total = regionalStats.reduce((sum, r) => sum + r.verifications, 0);
+    return formatIndianNumber(total);
 }

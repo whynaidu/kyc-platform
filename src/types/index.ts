@@ -17,6 +17,9 @@ export interface User {
   updatedAt: Date;
   phone?: string;
   address?: string;
+  // Indian KYC fields
+  aadhaar?: string;
+  pan?: string;
 }
 
 export interface AuthUser extends User {
@@ -24,14 +27,14 @@ export interface AuthUser extends User {
 }
 
 // Permission and Role Types
-export type PermissionModule = 
-  | 'dashboard' 
-  | 'kyc' 
-  | 'video_kyc' 
-  | 'users' 
-  | 'agents' 
-  | 'analytics' 
-  | 'settings' 
+export type PermissionModule =
+  | 'dashboard'
+  | 'kyc'
+  | 'video_kyc'
+  | 'users'
+  | 'agents'
+  | 'analytics'
+  | 'settings'
   | 'roles';
 
 export interface Permission {
@@ -171,11 +174,11 @@ export interface AdminKPIs {
 }
 
 // Activity Feed Types
-export type ActivityType = 
-  | 'verification_completed' 
-  | 'verification_failed' 
-  | 'user_registered' 
-  | 'agent_status_changed' 
+export type ActivityType =
+  | 'verification_completed'
+  | 'verification_failed'
+  | 'user_registered'
+  | 'agent_status_changed'
   | 'video_session_started'
   | 'video_session_ended';
 

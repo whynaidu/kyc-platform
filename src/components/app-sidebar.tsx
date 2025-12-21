@@ -21,6 +21,12 @@ import {
     ClipboardList,
     LineChart,
     User,
+    UserPlus2,
+    Phone,
+    CreditCard,
+    FileCheck,
+    Building2,
+    CheckSquare,
 } from "lucide-react"
 
 import {
@@ -118,7 +124,22 @@ const adminNavItems = [
     },
 ]
 
-
+const onboardingNavItems = [
+    {
+        title: "Digital Onboarding",
+        icon: UserPlus2,
+        roles: ["admin", "agent", "user"],
+        items: [
+            { title: "Start Onboarding", url: "/onboarding", icon: UserPlus2 },
+            { title: "1. Mobile & Email", url: "/onboarding/mobile-verify", icon: Phone },
+            { title: "2. Identity (Aadhaar/PAN)", url: "/onboarding/identity-verify", icon: FileCheck },
+            { title: "3. Video KYC", url: "/onboarding/video-kyc", icon: Video },
+            { title: "4. Address", url: "/onboarding/address-verify", icon: MapPin },
+            { title: "5. Bank Account", url: "/onboarding/bank-link", icon: Building2 },
+            { title: "6. Review & Submit", url: "/onboarding/review", icon: CheckSquare },
+        ],
+    },
+]
 
 interface NavItemWithSubProps {
     item: {
@@ -230,6 +251,17 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {filterByRole(kycNavItems).map((item) => (
+                                <NavItemWithSub key={item.title} item={item} pathname={pathname} />
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Onboarding</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {filterByRole(onboardingNavItems).map((item) => (
                                 <NavItemWithSub key={item.title} item={item} pathname={pathname} />
                             ))}
                         </SidebarMenu>
