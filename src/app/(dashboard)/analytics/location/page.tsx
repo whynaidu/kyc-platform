@@ -40,7 +40,8 @@ import {
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 
 import { regionalStats } from "@/lib/mock-data";
-import { WorldMap } from "@/components/world-map";
+import { IndiaMap } from "@/components/india-map";
+import { formatIndianNumber } from "@/lib/utils/indian-format";
 
 const chartConfig = {
     verifications: {
@@ -49,14 +50,16 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-const REGION_COLORS = {
-    "Asia": "#8b5cf6",
-    "Europe": "#3b82f6",
-    "North America": "#22c55e",
-    "South America": "#f59e0b",
-    "Africa": "#ef4444",
-    "Oceania": "#06b6d4",
-};
+// Indian zone colors
+const ZONE_COLORS = {
+    "North": "#3b82f6",
+    "South": "#22c55e",
+    "East": "#f59e0b",
+    "West": "#8b5cf6",
+    "Central": "#ef4444",
+    "Northeast": "#06b6d4",
+} as const;
+
 
 export default function LocationAnalyticsPage() {
     const [regionFilter, setRegionFilter] = React.useState<string>("all");
@@ -138,13 +141,13 @@ export default function LocationAnalyticsPage() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Countries Active</CardTitle>
+                        <CardTitle className="text-sm font-medium">States/UTs Active</CardTitle>
                         <MapPin className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <p className="text-2xl font-bold">{filteredStats.length}</p>
                         <p className="text-xs text-muted-foreground">
-                            Across {regions.length} regions
+                            Across {regions.length} zones
                         </p>
                     </CardContent>
                 </Card>
@@ -160,13 +163,13 @@ export default function LocationAnalyticsPage() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Top Country</CardTitle>
+                        <CardTitle className="text-sm font-medium">Top State</CardTitle>
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <p className="text-2xl font-bold">{topCountry?.country}</p>
                         <p className="text-xs text-muted-foreground">
-                            {topCountry?.verifications.toLocaleString()} verifications
+                            {formatIndianNumber(topCountry?.verifications || 0)} verifications
                         </p>
                     </CardContent>
                 </Card>
@@ -175,20 +178,20 @@ export default function LocationAnalyticsPage() {
             <Tabs defaultValue="overview" className="space-y-4">
                 <TabsList>
                     <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="countries">Countries</TabsTrigger>
-                    <TabsTrigger value="regions">Regions</TabsTrigger>
+                    <TabsTrigger value="countries">States</TabsTrigger>
+                    <TabsTrigger value="regions">Zones</TabsTrigger>
                 </TabsList>
 
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-4">
-                    {/* World Map Section */}
+                    {/* India Map Section */}
                     <Card className="overflow-hidden">
                         <CardHeader>
-                            <CardTitle>Global Verification Heatmap</CardTitle>
-                            <CardDescription>Real-time geographic distribution of identity verifications</CardDescription>
+                            <CardTitle>India Verification Heatmap</CardTitle>
+                            <CardDescription>Real-time state-wise distribution of identity verifications</CardDescription>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <WorldMap data={filteredStats} />
+                            <IndiaMap data={filteredStats.map(s => ({ state: s.country, verifications: s.verifications, successRate: s.successRate }))} />
                         </CardContent>
                     </Card>
 
@@ -196,8 +199,8 @@ export default function LocationAnalyticsPage() {
                         {/* Top Countries Bar Chart */}
                         <Card className="lg:col-span-1">
                             <CardHeader>
-                                <CardTitle>Top Countries by Verifications</CardTitle>
-                                <CardDescription>Top 8 performing countries</CardDescription>
+                                <CardTitle>Top States by Verifications</CardTitle>
+                                <CardDescription>Top 8 performing states</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -221,8 +224,8 @@ export default function LocationAnalyticsPage() {
                         {/* Regional Distribution */}
                         <Card className="lg:col-span-1">
                             <CardHeader>
-                                <CardTitle>Regional Distribution</CardTitle>
-                                <CardDescription>Verifications by region</CardDescription>
+                                <CardTitle>Zone-wise Distribution</CardTitle>
+                                <CardDescription>Verifications by zone</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
@@ -234,7 +237,7 @@ export default function LocationAnalyticsPage() {
                                                     <div className="flex items-center gap-2">
                                                         <div
                                                             className="h-3 w-3 rounded-full"
-                                                            style={{ backgroundColor: REGION_COLORS[region.region as keyof typeof REGION_COLORS] || "#6b7280" }}
+                                                            style={{ backgroundColor: ZONE_COLORS[region.region as keyof typeof ZONE_COLORS] || "#6b7280" }}
                                                         />
                                                         <span className="text-sm font-medium">{region.region}</span>
                                                     </div>
@@ -247,7 +250,7 @@ export default function LocationAnalyticsPage() {
                                                         className="h-full rounded-full transition-all"
                                                         style={{
                                                             width: `${percentage}%`,
-                                                            backgroundColor: REGION_COLORS[region.region as keyof typeof REGION_COLORS] || "#6b7280"
+                                                            backgroundColor: ZONE_COLORS[region.region as keyof typeof ZONE_COLORS] || "#6b7280"
                                                         }}
                                                     />
                                                 </div>
@@ -267,7 +270,7 @@ export default function LocationAnalyticsPage() {
                             <Card key={stat.country} className="relative overflow-hidden">
                                 <div
                                     className="absolute top-0 left-0 right-0 h-1"
-                                    style={{ backgroundColor: REGION_COLORS[stat.region as keyof typeof REGION_COLORS] || "#6b7280" }}
+                                    style={{ backgroundColor: ZONE_COLORS[stat.region as keyof typeof ZONE_COLORS] || "#6b7280" }}
                                 />
                                 <CardHeader className="pb-2">
                                     <div className="flex items-center justify-between">
@@ -308,15 +311,15 @@ export default function LocationAnalyticsPage() {
                 <TabsContent value="regions" className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Regional Statistics</CardTitle>
-                            <CardDescription>Detailed breakdown by country</CardDescription>
+                            <CardTitle>Zone Statistics</CardTitle>
+                            <CardDescription>Detailed breakdown by state</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Region</TableHead>
-                                        <TableHead>Country</TableHead>
+                                        <TableHead>Zone</TableHead>
+                                        <TableHead>State</TableHead>
                                         <TableHead className="text-right">Verifications</TableHead>
                                         <TableHead className="text-right">Success Rate</TableHead>
                                         <TableHead className="text-right">Avg. Time</TableHead>
@@ -330,7 +333,7 @@ export default function LocationAnalyticsPage() {
                                                 <div className="flex items-center gap-2">
                                                     <div
                                                         className="h-2 w-2 rounded-full"
-                                                        style={{ backgroundColor: REGION_COLORS[stat.region as keyof typeof REGION_COLORS] || "#6b7280" }}
+                                                        style={{ backgroundColor: ZONE_COLORS[stat.region as keyof typeof ZONE_COLORS] || "#6b7280" }}
                                                     />
                                                     <span>{stat.region}</span>
                                                 </div>

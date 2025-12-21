@@ -28,6 +28,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { AgentStatusControl, AgentStatus } from "@/components/agent/status-control";
 import { mockQueueItems } from "@/lib/mock-data";
 import { QueueItem, Priority } from "@/types";
 
@@ -47,6 +48,20 @@ export default function AgentQueuePage() {
     const [queue, setQueue] = React.useState<QueueItem[]>(mockQueueItems);
     const [priorityFilter, setPriorityFilter] = React.useState<string>("all");
     const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
+    const [agentStatus, setAgentStatus] = React.useState<AgentStatus>("offline");
+
+    React.useEffect(() => {
+        // Load saved status from localStorage
+        const savedStatus = localStorage.getItem("agent_status") as AgentStatus;
+        if (savedStatus) {
+            setAgentStatus(savedStatus);
+        }
+    }, []);
+
+    const handleStatusChange = (newStatus: AgentStatus) => {
+        setAgentStatus(newStatus);
+        localStorage.setItem("agent_status", newStatus);
+    };
 
     const filteredQueue = React.useMemo(() => {
         let filtered = [...queue];
@@ -67,19 +82,36 @@ export default function AgentQueuePage() {
     }, [queue, priorityFilter, sortOrder]);
 
     const startSession = (item: QueueItem) => {
+        // Check if agent is online
+        if (agentStatus !== "online") {
+            toast.warning("You must be online", {
+                description: "Please set your status to Online before starting a session.",
+            });
+            return;
+        }
+
         toast.success("Session started", {
             description: `Starting verification session with ${item.user.name}`,
         });
+        // Set status to in_call when starting session
+        setAgentStatus("in_call");
+        localStorage.setItem("agent_status", "in_call");
         router.push("/agent/video-session");
     };
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Verification Queue</h1>
-                <p className="text-muted-foreground">
-                    Manage and process pending KYC verification requests.
-                </p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Verification Queue</h1>
+                    <p className="text-muted-foreground">
+                        Manage and process pending KYC verification requests.
+                    </p>
+                </div>
+                <AgentStatusControl
+                    initialStatus={agentStatus}
+                    onStatusChange={handleStatusChange}
+                />
             </div>
 
             <Card>

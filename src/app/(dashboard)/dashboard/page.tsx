@@ -179,19 +179,21 @@ export default function DashboardPage() {
                         <CardTitle>Verification Trends</CardTitle>
                         <CardDescription>Daily verifications over the last 14 days</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                    <CardContent className="px-2 sm:px-6">
+                        <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
                             <AreaChart
                                 data={trends}
-                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                                     className="text-xs"
+                                    tick={{ fontSize: 10 }}
+                                    interval="preserveStartEnd"
                                 />
-                                <YAxis className="text-xs" />
+                                <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} />
                                 <ChartTooltip content={<ChartTooltipContent />} />
                                 <Area
                                     type="monotone"
@@ -220,8 +222,8 @@ export default function DashboardPage() {
                         <CardTitle>Verification Methods</CardTitle>
                         <CardDescription>Distribution by KYC type</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                    <CardContent className="px-2 sm:px-6">
+                        <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full mx-auto">
                             <PieChart>
                                 <Pie
                                     data={distribution}
@@ -229,8 +231,8 @@ export default function DashboardPage() {
                                     nameKey="name"
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={100}
+                                    innerRadius="40%"
+                                    outerRadius="70%"
                                     paddingAngle={2}
                                 >
                                     {distribution.map((entry, index) => (
@@ -240,11 +242,11 @@ export default function DashboardPage() {
                                 <ChartTooltip content={<ChartTooltipContent />} />
                             </PieChart>
                         </ChartContainer>
-                        <div className="mt-4 flex flex-wrap justify-center gap-4">
+                        <div className="mt-4 flex flex-wrap justify-center gap-3 sm:gap-4">
                             {distribution.map((item, index) => (
-                                <div key={index} className="flex items-center gap-2 text-sm">
+                                <div key={index} className="flex items-center gap-2 text-xs sm:text-sm">
                                     <div
-                                        className="h-3 w-3 rounded-full"
+                                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full flex-shrink-0"
                                         style={{ backgroundColor: item.fill }}
                                     />
                                     <span className="text-muted-foreground">{item.name}</span>

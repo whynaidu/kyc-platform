@@ -150,16 +150,17 @@ export default function AgentDetailPage() {
                     <CardTitle>Weekly Performance</CardTitle>
                     <CardDescription>Verifications over the last 7 days</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                        <BarChart data={chartData}>
+                <CardContent className="px-2 sm:px-6">
+                    <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
+                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                             <XAxis
                                 dataKey="date"
                                 tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { weekday: "short" })}
                                 className="text-xs"
+                                tick={{ fontSize: 10 }}
                             />
-                            <YAxis className="text-xs" />
+                            <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <Bar dataKey="verifications" fill="hsl(var(--primary))" radius={4} />
                         </BarChart>

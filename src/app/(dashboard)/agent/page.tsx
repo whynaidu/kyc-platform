@@ -23,6 +23,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { AgentStatusControl, AgentStatus } from "@/components/agent/status-control";
 import { getAgentKPIs, mockQueueItems, mockVideoSessions } from "@/lib/mock-data";
 import { AgentKPIs } from "@/types";
 
@@ -78,10 +79,21 @@ function formatDuration(seconds: number): string {
 export default function AgentDashboardPage() {
     const router = useRouter();
     const [kpis, setKPIs] = React.useState<AgentKPIs | null>(null);
+    const [agentStatus, setAgentStatus] = React.useState<AgentStatus>("offline");
 
     React.useEffect(() => {
         setKPIs(getAgentKPIs("agent-profile-1"));
+        // Load saved status from localStorage
+        const savedStatus = localStorage.getItem("agent_status") as AgentStatus;
+        if (savedStatus) {
+            setAgentStatus(savedStatus);
+        }
     }, []);
+
+    const handleStatusChange = (newStatus: AgentStatus) => {
+        setAgentStatus(newStatus);
+        localStorage.setItem("agent_status", newStatus);
+    };
 
     if (!kpis) {
         return <div className="animate-pulse space-y-4">Loading...</div>;
@@ -91,9 +103,39 @@ export default function AgentDashboardPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            {/* Status Control Card */}
+            <Card className="border-primary/20 bg-primary/5">
+                <CardContent className="py-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                <Users className="h-6 w-6 text-primary" />
+                            </div>
+                            <div>
+                                <h2 className="font-semibold">Your Availability</h2>
+                                <p className="text-sm text-muted-foreground">
+                                    {agentStatus === "online"
+                                        ? "You are receiving verification requests"
+                                        : agentStatus === "break"
+                                        ? "You are on a break - no new requests"
+                                        : agentStatus === "in_call"
+                                        ? "You are currently on a video call"
+                                        : "You are offline - go online to receive requests"
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <AgentStatusControl
+                            initialStatus={agentStatus}
+                            onStatusChange={handleStatusChange}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Agent Dashboard</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agent Dashboard</h1>
                     <p className="text-muted-foreground">
                         Welcome back! Here&apos;s your performance overview.
                     </p>

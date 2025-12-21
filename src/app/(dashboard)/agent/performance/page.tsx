@@ -125,16 +125,18 @@ export default function AgentPerformancePage() {
                         <CardTitle>Verifications Over Time</CardTitle>
                         <CardDescription>Daily verification count</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                            <BarChart data={data}>
+                    <CardContent className="px-2 sm:px-6">
+                        <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
+                            <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                                     className="text-xs"
+                                    tick={{ fontSize: 10 }}
+                                    interval="preserveStartEnd"
                                 />
-                                <YAxis className="text-xs" />
+                                <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} />
                                 <ChartTooltip content={<ChartTooltipContent />} />
                                 <Bar dataKey="verifications" fill="var(--color-verifications)" radius={4} />
                             </BarChart>
@@ -148,16 +150,18 @@ export default function AgentPerformancePage() {
                         <CardTitle>Session Duration Trend</CardTitle>
                         <CardDescription>Average session duration in minutes</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                            <LineChart data={data}>
+                    <CardContent className="px-2 sm:px-6">
+                        <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
+                            <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                                     className="text-xs"
+                                    tick={{ fontSize: 10 }}
+                                    interval="preserveStartEnd"
                                 />
-                                <YAxis className="text-xs" />
+                                <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} />
                                 <ChartTooltip content={<ChartTooltipContent />} />
                                 <Line type="monotone" dataKey="duration" stroke="var(--color-duration)" strokeWidth={2} dot={false} />
                             </LineChart>
@@ -172,16 +176,18 @@ export default function AgentPerformancePage() {
                     <CardTitle>Approval Rate Trend</CardTitle>
                     <CardDescription>Daily approval rate percentage</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                        <LineChart data={data}>
+                <CardContent className="px-2 sm:px-6">
+                    <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
+                        <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                             <XAxis
                                 dataKey="date"
                                 tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                                 className="text-xs"
+                                tick={{ fontSize: 10 }}
+                                interval="preserveStartEnd"
                             />
-                            <YAxis domain={[0, 100]} className="text-xs" />
+                            <YAxis domain={[0, 100]} className="text-xs" tick={{ fontSize: 10 }} width={35} />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <Line type="monotone" dataKey="approvalRate" stroke="var(--color-approvalRate)" strokeWidth={2} dot={false} />
                         </LineChart>
