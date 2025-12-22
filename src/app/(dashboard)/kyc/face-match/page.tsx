@@ -46,7 +46,7 @@ export default function FaceMatchPage() {
     const [matchScore, setMatchScore] = React.useState<number>(0);
     const [result, setResult] = React.useState<"success" | "failure" | null>(null);
 
-    const startCamera = async () => {
+    const startCamera = React.useCallback(async () => {
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: step === "selfie-capture" ? "user" : "environment", width: 640, height: 480 },
@@ -56,19 +56,19 @@ export default function FaceMatchPage() {
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
             }
-        } catch (error) {
+        } catch {
             toast.error("Camera access denied", {
                 description: "Please allow camera access to continue.",
             });
         }
-    };
+    }, [step]);
 
-    const stopCamera = () => {
+    const stopCamera = React.useCallback(() => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             setStream(null);
         }
-    };
+    }, [stream]);
 
     const captureImage = (): string | null => {
         if (!videoRef.current || !canvasRef.current) return null;
@@ -126,7 +126,7 @@ export default function FaceMatchPage() {
         return () => {
             stopCamera();
         };
-    }, [step]);
+    }, [step, startCamera, stopCamera]);
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">

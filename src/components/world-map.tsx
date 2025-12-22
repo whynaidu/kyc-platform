@@ -34,22 +34,6 @@ const getCoordinates = (country: string): [number, number] | null => {
     return mapping[country] || null;
 };
 
-// Generate connections (using coordinates)
-const generateConnections = (countries: string[]) => {
-    const connections: { start: string, end: string }[] = [];
-    const hub = "United States";
-
-    countries.forEach(country => {
-        if (country !== hub && Math.random() > 0.6) {
-            connections.push({ start: hub, end: country });
-        }
-        if (Math.random() > 0.8 && country !== "Australia") {
-            connections.push({ start: country, end: "Australia" });
-        }
-    });
-    return connections;
-}
-
 export function WorldMap({ data }: WorldMapProps) {
     const { theme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = React.useState(false);

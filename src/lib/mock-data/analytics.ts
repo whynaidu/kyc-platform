@@ -1,8 +1,8 @@
 import { DailyMetrics, RegionalStats, DashboardKPIs, AgentKPIs, AdminKPIs, ActivityItem, ActivityType } from '@/types';
 import { mockUsers, regularUsers } from './users';
 import { mockAgents, onlineAgents } from './agents';
-import { mockKYCRecords, pendingRecords, verifiedRecords, failedRecords } from './kyc-records';
-import { formatIndianNumber, formatIndianCurrency } from '@/lib/utils/indian-format';
+import { pendingRecords } from './kyc-records';
+import { formatIndianNumber } from '@/lib/utils/indian-format';
 
 // Generate 30 days of metrics
 function generateDailyMetrics(): DailyMetrics[] {

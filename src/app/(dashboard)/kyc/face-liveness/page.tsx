@@ -47,19 +47,19 @@ export default function FaceLivenessPage() {
                 videoRef.current.srcObject = mediaStream;
             }
             setStep("capture");
-        } catch (error) {
+        } catch {
             toast.error("Camera access denied", {
                 description: "Please allow camera access to continue with face liveness check.",
             });
         }
     };
 
-    const stopCamera = () => {
+    const stopCamera = React.useCallback(() => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             setStream(null);
         }
-    };
+    }, [stream]);
 
     const simulateLivenessCheck = () => {
         setIsCapturing(true);
@@ -94,7 +94,7 @@ export default function FaceLivenessPage() {
         return () => {
             stopCamera();
         };
-    }, []);
+    }, [stopCamera]);
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">

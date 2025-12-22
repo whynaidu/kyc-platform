@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getAdminKPIs, activityFeed, mockAgents } from "@/lib/mock-data";
 import { AdminKPIs } from "@/types";

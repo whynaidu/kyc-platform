@@ -23,6 +23,7 @@ export default function WaitingRoomPage() {
     const router = useRouter();
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const [stream, setStream] = React.useState<MediaStream | null>(null);
+    const streamRef = React.useRef<MediaStream | null>(null);
     const [isMuted, setIsMuted] = React.useState(false);
     const [isVideoOff, setIsVideoOff] = React.useState(false);
     const [queuePosition, setQueuePosition] = React.useState(3);
@@ -35,12 +36,13 @@ export default function WaitingRoomPage() {
                     video: true,
                     audio: true,
                 });
+                streamRef.current = mediaStream;
                 setStream(mediaStream);
                 if (videoRef.current) {
                     videoRef.current.srcObject = mediaStream;
                 }
-            } catch (error) {
-                console.error("Failed to access camera/microphone:", error);
+            } catch {
+                // Camera access failed
             }
         };
 
@@ -64,8 +66,8 @@ export default function WaitingRoomPage() {
 
         return () => {
             clearInterval(interval);
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
             }
         };
     }, [router]);

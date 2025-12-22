@@ -1,13 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import {
     User,
-    Mail,
-    Phone,
-    MapPin,
-    Calendar,
     Shield,
     Edit,
     Camera,
@@ -29,13 +24,11 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import { getCurrentUser } from "@/lib/auth";
 import { AuthUser } from "@/types";
 
 export default function ProfilePage() {
-    const router = useRouter();
     const [user, setUser] = React.useState<AuthUser | null>(null);
     const [isEditing, setIsEditing] = React.useState(false);
     const [editForm, setEditForm] = React.useState({

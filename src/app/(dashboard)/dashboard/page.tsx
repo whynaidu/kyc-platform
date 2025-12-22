@@ -26,9 +26,21 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell, ResponsiveContainer } from "recharts";
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell } from "recharts";
 import { getDashboardKPIs, getVerificationTrends, getMethodDistribution, activityFeed } from "@/lib/mock-data";
-import { DashboardKPIs, ActivityItem } from "@/types";
+import { DashboardKPIs } from "@/types";
+
+interface TrendData {
+    date: string;
+    successful: number;
+    failed: number;
+}
+
+interface DistributionData {
+    name: string;
+    value: number;
+    fill: string;
+}
 
 const chartConfig = {
     successful: {
@@ -115,8 +127,8 @@ function formatTimeAgo(date: Date): string {
 
 export default function DashboardPage() {
     const [kpis, setKPIs] = React.useState<DashboardKPIs | null>(null);
-    const [trends, setTrends] = React.useState<any[]>([]);
-    const [distribution, setDistribution] = React.useState<any[]>([]);
+    const [trends, setTrends] = React.useState<TrendData[]>([]);
+    const [distribution, setDistribution] = React.useState<DistributionData[]>([]);
 
     React.useEffect(() => {
         setKPIs(getDashboardKPIs());

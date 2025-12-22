@@ -43,6 +43,41 @@ export default function MobileVerifyPage() {
     const [privacyAccepted, setPrivacyAccepted] = React.useState(false);
     const [aadhaarConsent, setAadhaarConsent] = React.useState(false);
 
+    // Define handlers before useEffect to avoid "used before defined" error
+    const handleVerifyMobileOtp = React.useCallback(async () => {
+        setVerifyingMobile(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setMobileVerified(true);
+        setVerifyingMobile(false);
+    }, []);
+
+    const handleVerifyEmailOtp = React.useCallback(async () => {
+        setVerifyingEmail(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setEmailVerified(true);
+        setVerifyingEmail(false);
+    }, []);
+
+    const handleSendMobileOtp = async () => {
+        if (!validateMobile(mobile)) return;
+
+        setSendingMobileOtp(true);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setMobileOtpSent(true);
+        setMobileResendTimer(45);
+        setSendingMobileOtp(false);
+    };
+
+    const handleSendEmailOtp = async () => {
+        if (!email.includes('@')) return;
+
+        setSendingEmailOtp(true);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setEmailOtpSent(true);
+        setEmailResendTimer(45);
+        setSendingEmailOtp(false);
+    };
+
     // Timer Effect
     React.useEffect(() => {
         if (mobileResendTimer > 0) {
@@ -63,49 +98,13 @@ export default function MobileVerifyPage() {
         if (mobileOtp.length === 6 && mobileOtpSent && !mobileVerified) {
             handleVerifyMobileOtp();
         }
-    }, [mobileOtp]);
+    }, [mobileOtp, mobileOtpSent, mobileVerified, handleVerifyMobileOtp]);
 
     React.useEffect(() => {
         if (emailOtp.length === 6 && emailOtpSent && !emailVerified) {
             handleVerifyEmailOtp();
         }
-    }, [emailOtp]);
-
-    const handleSendMobileOtp = async () => {
-        if (!validateMobile(mobile)) return;
-
-        setSendingMobileOtp(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setMobileOtpSent(true);
-        setMobileResendTimer(45);
-        setSendingMobileOtp(false);
-    };
-
-    const handleSendEmailOtp = async () => {
-        if (!email.includes('@')) return;
-
-        setSendingEmailOtp(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setEmailOtpSent(true);
-        setEmailResendTimer(45);
-        setSendingEmailOtp(false);
-    };
-
-    const handleVerifyMobileOtp = async () => {
-        setVerifyingMobile(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        // Mock: Accept any 6-digit OTP
-        setMobileVerified(true);
-        setVerifyingMobile(false);
-    };
-
-    const handleVerifyEmailOtp = async () => {
-        setVerifyingEmail(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setEmailVerified(true);
-        setVerifyingEmail(false);
-    };
+    }, [emailOtp, emailOtpSent, emailVerified, handleVerifyEmailOtp]);
 
     const canContinue = mobileVerified && emailVerified && termsAccepted && privacyAccepted && aadhaarConsent;
 

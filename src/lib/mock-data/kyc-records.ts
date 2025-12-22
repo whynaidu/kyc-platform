@@ -1,5 +1,5 @@
 import { KYCRecord, KYCType, VerificationStatus, QueueItem, Priority, VideoSession, VideoSessionStatus } from '@/types';
-import { regularUsers, mockUsers } from './users';
+import { regularUsers } from './users';
 import { mockAgents } from './agents';
 
 // Generate 100+ KYC records

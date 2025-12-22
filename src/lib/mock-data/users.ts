@@ -1,4 +1,4 @@
-import { User, UserRole, KYCStatus, UserStatus } from '@/types';
+import { User, KYCStatus, UserStatus } from '@/types';
 import { generateTestAadhaar } from '@/lib/validators/aadhaar';
 import { generateTestPAN } from '@/lib/validators/pan';
 
@@ -70,7 +70,6 @@ function generateMobile(): string {
 
 // Generate 50+ mock users with Indian data
 function generateUsers(): User[] {
-    const roles: UserRole[] = ['admin', 'agent', 'user'];
     const kycStatuses: KYCStatus[] = ['pending', 'verified', 'failed', 'in_progress', 'not_started'];
     const userStatuses: UserStatus[] = ['active', 'inactive', 'suspended'];
 

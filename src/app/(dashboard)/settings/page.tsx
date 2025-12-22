@@ -5,7 +5,6 @@ import {
     Bell,
     Palette,
     Shield,
-    Settings2,
     Mail,
     MessageSquare,
     Slack,
@@ -25,19 +24,11 @@ import { toast } from "sonner";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 
 // Color accent options - using OKLCH format to match globals.css
 const accentColors = [
@@ -102,6 +93,17 @@ export default function SettingsPage() {
         location: true,
     });
 
+    const applyAccentColor = React.useCallback((colorValue: string) => {
+        const color = accentColors.find(c => c.value === colorValue);
+        if (color && color.value !== "default" && color.color) {
+            document.documentElement.style.setProperty("--primary", color.color);
+            document.documentElement.style.setProperty("--primary-foreground", color.fg);
+        } else {
+            document.documentElement.style.removeProperty("--primary");
+            document.documentElement.style.removeProperty("--primary-foreground");
+        }
+    }, []);
+
     React.useEffect(() => {
         setMounted(true);
         // Load saved accent color
@@ -115,18 +117,7 @@ export default function SettingsPage() {
         if (savedVkycConfig) {
             setVkycConfig(JSON.parse(savedVkycConfig));
         }
-    }, []);
-
-    const applyAccentColor = (colorValue: string) => {
-        const color = accentColors.find(c => c.value === colorValue);
-        if (color && color.value !== "default" && color.color) {
-            document.documentElement.style.setProperty("--primary", color.color);
-            document.documentElement.style.setProperty("--primary-foreground", color.fg);
-        } else {
-            document.documentElement.style.removeProperty("--primary");
-            document.documentElement.style.removeProperty("--primary-foreground");
-        }
-    };
+    }, [applyAccentColor]);
 
     const handleAccentChange = (value: string) => {
         setAccentColor(value);

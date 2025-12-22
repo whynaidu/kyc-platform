@@ -137,8 +137,6 @@ export function AgentStatusControl({
         setPendingStatus(null);
     };
 
-    const StatusIcon = currentStatusOption.icon;
-
     return (
         <>
             <DropdownMenu>
@@ -163,7 +161,6 @@ export function AgentStatusControl({
                     <DropdownMenuLabel>Set Your Status</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {statusOptions.map((option) => {
-                        const Icon = option.icon;
                         const isActive = status === option.value;
                         return (
                             <DropdownMenuItem

@@ -2,14 +2,23 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Video, Mic, MicOff, VideoOff, Phone, CheckCircle2, Clock, Loader2, User } from "lucide-react";
+import { Video, Mic, MicOff, VideoOff, Phone, CheckCircle2, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
+const instructions = [
+    "Please show your face clearly to the camera",
+    "Now, please show your PAN card to the camera",
+    "Hold the PAN card steady for verification",
+    "Thank you! Please look at the camera",
+    "Verification complete. Thank you!"
+];
+
 export default function VideoSessionPage() {
     const router = useRouter();
     const userVideoRef = React.useRef<HTMLVideoElement>(null);
+    const streamRef = React.useRef<MediaStream | null>(null);
 
     const [duration, setDuration] = React.useState(0);
     const [isMuted, setIsMuted] = React.useState(false);
@@ -19,14 +28,6 @@ export default function VideoSessionPage() {
     const [stream, setStream] = React.useState<MediaStream | null>(null);
     const [sessionComplete, setSessionComplete] = React.useState(false);
 
-    const instructions = [
-        "Please show your face clearly to the camera",
-        "Now, please show your PAN card to the camera",
-        "Hold the PAN card steady for verification",
-        "Thank you! Please look at the camera",
-        "Verification complete. Thank you!"
-    ];
-
     // Initialize camera
     React.useEffect(() => {
         const initCamera = async () => {
@@ -35,6 +36,7 @@ export default function VideoSessionPage() {
                     video: true,
                     audio: true
                 });
+                streamRef.current = mediaStream;
                 setStream(mediaStream);
                 if (userVideoRef.current) {
                     userVideoRef.current.srcObject = mediaStream;
@@ -45,7 +47,7 @@ export default function VideoSessionPage() {
         };
         initCamera();
         return () => {
-            stream?.getTracks().forEach(track => track.stop());
+            streamRef.current?.getTracks().forEach(track => track.stop());
         };
     }, []);
 

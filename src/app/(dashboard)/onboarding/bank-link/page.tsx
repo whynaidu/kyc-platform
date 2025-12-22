@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Loader2, CheckCircle2, Building2, CreditCard, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -162,7 +162,7 @@ export default function BankLinkPage() {
                     {/* Account Type */}
                     <div className="space-y-2">
                         <Label>Account Type *</Label>
-                        <RadioGroup value={accountType} onValueChange={(v) => setAccountType(v as any)} disabled={verified}>
+                        <RadioGroup value={accountType} onValueChange={(v) => setAccountType(v as 'savings' | 'current')} disabled={verified}>
                             <div className="flex gap-4">
                                 <div className="flex items-center gap-2">
                                     <RadioGroupItem value="savings" id="savings" />
@@ -201,7 +201,7 @@ export default function BankLinkPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <RadioGroup value={verificationMethod} onValueChange={(v) => setVerificationMethod(v as any)} disabled={verified}>
+                    <RadioGroup value={verificationMethod} onValueChange={(v) => setVerificationMethod(v as 'penny_drop' | 'upi' | 'cheque')} disabled={verified}>
                         <div className="flex items-start gap-3 p-3 rounded-lg border">
                             <RadioGroupItem value="penny_drop" id="penny_drop" />
                             <Label htmlFor="penny_drop" className="cursor-pointer flex-1">

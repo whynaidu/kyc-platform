@@ -11,10 +11,14 @@ import { formatIndianDateTime } from "@/lib/utils/indian-format";
 export default function SuccessPage() {
     const [copied, setCopied] = React.useState(false);
 
-    // Generate reference numbers
-    const referenceNumber = `KYC${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`;
-    const ckycNumber = Math.floor(Math.random() * 90000000000000 + 10000000000000).toString();
-    const ucicNumber = `UC${Math.floor(Math.random() * 900000000 + 100000000)}`;
+    // Generate reference numbers once on mount
+    const [referenceNumber] = React.useState(() => {
+        const date = new Date();
+        const random = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+        return `KYC${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}${random}`;
+    });
+    const [ckycNumber] = React.useState(() => Math.floor(Math.random() * 90000000000000 + 10000000000000).toString());
+    const [ucicNumber] = React.useState(() => `UC${Math.floor(Math.random() * 900000000 + 100000000)}`);
 
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);

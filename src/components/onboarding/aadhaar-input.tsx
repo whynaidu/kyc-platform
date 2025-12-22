@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { formatAadhaar, validateAadhaar, AADHAAR_PATTERN } from "@/lib/validators/aadhaar";
+import { formatAadhaar, validateAadhaar } from "@/lib/validators/aadhaar";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 interface AadhaarInputProps {

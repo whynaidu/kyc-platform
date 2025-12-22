@@ -78,7 +78,7 @@ function getKYCStatusBadge(status: KYCStatus) {
 }
 
 export default function AdminUsersPage() {
-    const [users, setUsers] = React.useState<User[]>(mockUsers);
+    const [users] = React.useState<User[]>(mockUsers);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [showAddDialog, setShowAddDialog] = React.useState(false);
     const [newUser, setNewUser] = React.useState({

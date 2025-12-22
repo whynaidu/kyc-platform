@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { validatePAN, getPANEntityType, isIndividualPAN, PAN_PATTERN } from "@/lib/validators/pan";
+import { validatePAN, getPANEntityType, isIndividualPAN } from "@/lib/validators/pan";
 import { CheckCircle2, XCircle, User, Building2 } from "lucide-react";
 
 interface PANInputProps {

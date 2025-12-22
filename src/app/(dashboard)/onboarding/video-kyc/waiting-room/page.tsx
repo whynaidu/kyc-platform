@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function WaitingRoomPage() {
     const router = useRouter();
     const videoRef = React.useRef<HTMLVideoElement>(null);
+    const streamRef = React.useRef<MediaStream | null>(null);
 
     const [stream, setStream] = React.useState<MediaStream | null>(null);
     const [isMuted, setIsMuted] = React.useState(false);
@@ -26,6 +27,7 @@ export default function WaitingRoomPage() {
                     video: true,
                     audio: true
                 });
+                streamRef.current = mediaStream;
                 setStream(mediaStream);
                 if (videoRef.current) {
                     videoRef.current.srcObject = mediaStream;
@@ -38,7 +40,7 @@ export default function WaitingRoomPage() {
         initCamera();
 
         return () => {
-            stream?.getTracks().forEach(track => track.stop());
+            streamRef.current?.getTracks().forEach(track => track.stop());
         };
     }, []);
 
@@ -107,7 +109,7 @@ export default function WaitingRoomPage() {
             <Card>
                 <CardHeader className="pb-3">
                     <CardTitle className="text-base">Your Camera Preview</CardTitle>
-                    <CardDescription>Make sure you're clearly visible</CardDescription>
+                    <CardDescription>Make sure you&apos;re clearly visible</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="relative aspect-video bg-muted rounded-lg overflow-hidden">

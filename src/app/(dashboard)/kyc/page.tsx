@@ -82,14 +82,14 @@ export default function AIAgentVKYCPage() {
     const [selectedDocument, setSelectedDocument] = React.useState<string>("");
     const [documentImage, setDocumentImage] = React.useState<string | null>(null);
     const [selfieImage, setSelfieImage] = React.useState<string | null>(null);
-    const [matchScore, setMatchScore] = React.useState<number>(0);
+    const [, setMatchScore] = React.useState<number>(0);
 
     // Step 3: Handwriting
     const [verificationCode, setVerificationCode] = React.useState<string>("");
-    const [capturedHandwriting, setCapturedHandwriting] = React.useState<string | null>(null);
+    const [, setCapturedHandwriting] = React.useState<string | null>(null);
 
     // Step 4: Location
-    const [location, setLocation] = React.useState<{
+    const [, setLocation] = React.useState<{
         latitude: number;
         longitude: number;
         address: string;
@@ -116,19 +116,19 @@ export default function AIAgentVKYCPage() {
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
             }
-        } catch (error) {
+        } catch {
             toast.error("Camera access denied", {
                 description: "Please allow camera access to continue.",
             });
         }
     };
 
-    const stopCamera = () => {
+    const stopCamera = React.useCallback(() => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             setStream(null);
         }
-    };
+    }, [stream]);
 
     const captureImage = (): string | null => {
         if (!videoRef.current || !canvasRef.current) return null;
@@ -296,7 +296,7 @@ export default function AIAgentVKYCPage() {
 
     React.useEffect(() => {
         return () => stopCamera();
-    }, []);
+    }, [stopCamera]);
 
     // Render step content based on current step and sub-step
     const renderStepContent = () => {

@@ -237,7 +237,7 @@ export default function AddressVerifyPage() {
                     <CardDescription>How would you like to verify your address?</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <RadioGroup value={addressProofMethod} onValueChange={(v) => setAddressProofMethod(v as any)} disabled={addressVerified}>
+                    <RadioGroup value={addressProofMethod} onValueChange={(v) => setAddressProofMethod(v as 'aadhaar' | 'digilocker' | 'upload')} disabled={addressVerified}>
                         <div className="flex items-start gap-3 p-3 rounded-lg border">
                             <RadioGroupItem value="aadhaar" id="aadhaar_addr" />
                             <Label htmlFor="aadhaar_addr" className="cursor-pointer flex-1">

@@ -4,9 +4,7 @@ import * as React from "react";
 import {
     MapPin,
     TrendingUp,
-    TrendingDown,
     Globe,
-    Users,
     Clock,
     CheckCircle,
     BarChart3,
@@ -37,7 +35,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts";
 
 import { regionalStats } from "@/lib/mock-data";
 import { IndiaMap } from "@/components/india-map";

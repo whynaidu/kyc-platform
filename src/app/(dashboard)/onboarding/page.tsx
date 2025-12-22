@@ -26,7 +26,7 @@ export default function OnboardingLandingPage() {
             {/* What You'll Need */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg">What You'll Need</CardTitle>
+                    <CardTitle className="text-lg">What You&apos;ll Need</CardTitle>
                     <CardDescription>आपको क्या चाहिए</CardDescription>
                 </CardHeader>
                 <CardContent>

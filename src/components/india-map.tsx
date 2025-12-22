@@ -94,7 +94,7 @@ const MemoizedGeography = React.memo(function MemoizedGeography({
     onMouseEnter,
     onMouseLeave,
 }: {
-    geo: any;
+    geo: GeoJSON.Feature;
     fill: string;
     stroke: string;
     hoverFill: string;
@@ -121,7 +121,7 @@ const MemoizedGeography = React.memo(function MemoizedGeography({
 export function IndiaMap({ data }: IndiaMapProps) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = React.useState(false);
-    const [hoveredState, setHoveredState] = React.useState<string | null>(null);
+    const [, setHoveredState] = React.useState<string | null>(null);
     const [tooltipData, setTooltipData] = React.useState<{
         name: string;
         verifications?: number;
@@ -188,7 +188,7 @@ export function IndiaMap({ data }: IndiaMapProps) {
             };
         }
 
-        const { l, c, h } = primaryColor;
+        const { c, h } = primaryColor;
 
         if (isDark) {
             // Dark mode: lighter colors for filled states (so they're visible on dark bg)

@@ -10,7 +10,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { maskAadhaar } from "@/lib/validators/aadhaar";
-import { maskPAN } from "@/lib/validators/pan";
 import { maskAccountNumber } from "@/lib/validators/indian-patterns";
 
 export default function ReviewPage() {
@@ -25,8 +24,8 @@ export default function ReviewPage() {
         aadhaar: string;
         pan: string;
         kycType: string;
-        address: any;
-        bank: any;
+        address: Record<string, string>;
+        bank: Record<string, string>;
     } | null>(null);
 
     React.useEffect(() => {

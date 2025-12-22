@@ -52,7 +52,7 @@ export default function RegisterPage() {
         },
     });
 
-    async function onSubmit(data: RegisterFormData) {
+    async function onSubmit(_: RegisterFormData) {
         setIsLoading(true);
         try {
             // Simulate API call
@@ -62,7 +62,7 @@ export default function RegisterPage() {
                 description: "Please login with your new credentials.",
             });
             router.push("/login");
-        } catch (error) {
+        } catch {
             toast.error("Registration failed", {
                 description: "An error occurred. Please try again.",
             });

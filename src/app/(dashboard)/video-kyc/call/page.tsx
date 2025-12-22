@@ -28,6 +28,7 @@ export default function VideoCallPage() {
     const router = useRouter();
     const userVideoRef = React.useRef<HTMLVideoElement>(null);
     const [stream, setStream] = React.useState<MediaStream | null>(null);
+    const streamRef = React.useRef<MediaStream | null>(null);
     const [isMuted, setIsMuted] = React.useState(false);
     const [isVideoOff, setIsVideoOff] = React.useState(false);
     const [callDuration, setCallDuration] = React.useState(0);
@@ -39,12 +40,13 @@ export default function VideoCallPage() {
                     video: true,
                     audio: true,
                 });
+                streamRef.current = mediaStream;
                 setStream(mediaStream);
                 if (userVideoRef.current) {
                     userVideoRef.current.srcObject = mediaStream;
                 }
-            } catch (error) {
-                console.error("Failed to access camera/microphone:", error);
+            } catch {
+                // Camera access failed
             }
         };
 
@@ -57,8 +59,8 @@ export default function VideoCallPage() {
 
         return () => {
             clearInterval(timer);
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
             }
         };
     }, []);

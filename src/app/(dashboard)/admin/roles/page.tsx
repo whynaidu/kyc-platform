@@ -20,8 +20,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { Role, Permission, PermissionModule } from "@/types";
+import { Role, PermissionModule } from "@/types";
 
 const modules: { id: PermissionModule; label: string }[] = [
     { id: "dashboard", label: "Dashboard" },
@@ -71,7 +70,7 @@ const initialRoles: Role[] = [
 ];
 
 export default function AdminRolesPage() {
-    const [roles, setRoles] = React.useState<Role[]>(initialRoles);
+    const [roles] = React.useState<Role[]>(initialRoles);
     const [showEditDialog, setShowEditDialog] = React.useState(false);
     const [showCreateDialog, setShowCreateDialog] = React.useState(false);
     const [selectedRole, setSelectedRole] = React.useState<Role | null>(null);

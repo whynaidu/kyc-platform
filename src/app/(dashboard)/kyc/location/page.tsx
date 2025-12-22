@@ -71,7 +71,7 @@ export default function LocationPage() {
                 setLocation(mockLocation);
                 setStep("confirm");
             },
-            (error) => {
+            () => {
                 toast.error("Location access denied", {
                     description: "Please allow location access or enter address manually.",
                 });

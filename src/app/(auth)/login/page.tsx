@@ -59,7 +59,7 @@ export default function LoginPage() {
                     description: "Please check your email and password.",
                 });
             }
-        } catch (error) {
+        } catch {
             toast.error("Login failed", {
                 description: "An error occurred. Please try again.",
             });

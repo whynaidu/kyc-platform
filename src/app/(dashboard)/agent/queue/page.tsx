@@ -45,7 +45,7 @@ function getPriorityBadge(priority: Priority) {
 
 export default function AgentQueuePage() {
     const router = useRouter();
-    const [queue, setQueue] = React.useState<QueueItem[]>(mockQueueItems);
+    const [queue] = React.useState<QueueItem[]>(mockQueueItems);
     const [priorityFilter, setPriorityFilter] = React.useState<string>("all");
     const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
     const [agentStatus, setAgentStatus] = React.useState<AgentStatus>("offline");

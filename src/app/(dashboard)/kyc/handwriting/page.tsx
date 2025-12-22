@@ -59,19 +59,19 @@ export default function HandwritingPage() {
                 videoRef.current.srcObject = mediaStream;
             }
             setStep("capture");
-        } catch (error) {
+        } catch {
             toast.error("Camera access denied", {
                 description: "Please allow camera access to continue.",
             });
         }
     };
 
-    const stopCamera = () => {
+    const stopCamera = React.useCallback(() => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             setStream(null);
         }
-    };
+    }, [stream]);
 
     const captureImage = () => {
         if (!videoRef.current || !canvasRef.current) return;
@@ -119,7 +119,7 @@ export default function HandwritingPage() {
         return () => {
             stopCamera();
         };
-    }, []);
+    }, [stopCamera]);
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">

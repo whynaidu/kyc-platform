@@ -43,6 +43,24 @@ export default function IdentityVerifyPage() {
     const [verifyingAadhaar, setVerifyingAadhaar] = React.useState(false);
     const [verifyingPan, setVerifyingPan] = React.useState(false);
 
+    // Define handlers before useEffect to avoid "used before defined" error
+    const handleVerifyAadhaarOtp = React.useCallback(async () => {
+        setVerifyingAadhaar(true);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setAadhaarVerified(true);
+        setVerifyingAadhaar(false);
+    }, []);
+
+    const handleSendAadhaarOtp = async () => {
+        if (!aadhaarValid) return;
+
+        setSendingOtp(true);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setAadhaarOtpSent(true);
+        setAadhaarResendTimer(60);
+        setSendingOtp(false);
+    };
+
     // Timer Effect
     React.useEffect(() => {
         if (aadhaarResendTimer > 0) {
@@ -56,24 +74,7 @@ export default function IdentityVerifyPage() {
         if (aadhaarOtp.length === 6 && aadhaarOtpSent && !aadhaarVerified) {
             handleVerifyAadhaarOtp();
         }
-    }, [aadhaarOtp]);
-
-    const handleSendAadhaarOtp = async () => {
-        if (!aadhaarValid) return;
-
-        setSendingOtp(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setAadhaarOtpSent(true);
-        setAadhaarResendTimer(60);
-        setSendingOtp(false);
-    };
-
-    const handleVerifyAadhaarOtp = async () => {
-        setVerifyingAadhaar(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setAadhaarVerified(true);
-        setVerifyingAadhaar(false);
-    };
+    }, [aadhaarOtp, aadhaarOtpSent, aadhaarVerified, handleVerifyAadhaarOtp]);
 
     const handleVerifyXml = async () => {
         if (!xmlFile || shareCode.length !== 4) return;

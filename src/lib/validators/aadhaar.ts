@@ -82,7 +82,7 @@ export function maskAadhaar(aadhaar: string): string {
 export function generateTestAadhaar(): string {
     // Generate 11 random digits (first digit 2-9)
     const firstDigit = Math.floor(Math.random() * 8) + 2;
-    let digits = [firstDigit];
+    const digits = [firstDigit];
 
     for (let i = 0; i < 10; i++) {
         digits.push(Math.floor(Math.random() * 10));

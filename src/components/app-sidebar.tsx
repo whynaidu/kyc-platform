@@ -10,7 +10,6 @@ import {
     Video,
     UserCheck,
     MapPin,
-    Settings,
     LogOut,
     ChevronDown,
     Fingerprint,
@@ -20,10 +19,8 @@ import {
     UserCog,
     ClipboardList,
     LineChart,
-    User,
     UserPlus2,
     Phone,
-    CreditCard,
     FileCheck,
     Building2,
     CheckSquare,
@@ -50,7 +47,7 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { getCurrentUser, logout, hasRole } from "@/lib/auth"
+import { getCurrentUser, logout } from "@/lib/auth"
 import { AuthUser } from "@/types"
 
 const mainNavItems = [
