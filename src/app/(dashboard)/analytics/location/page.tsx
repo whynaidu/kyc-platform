@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-    MapPin,
-    TrendingUp,
-    Globe,
-    Clock,
-    CheckCircle,
-    BarChart3,
-} from "lucide-react";
+import { TrendingUp } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,10 +28,11 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
+import { KPICard } from "@/components/kpi-card";
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts";
 
 import { regionalStats } from "@/lib/mock-data";
-import { IndiaMap } from "@/components/india-map";
+import { IndiaMapMapcn } from "@/components/india-map-mapcn";
 import { formatIndianNumber } from "@/lib/utils/indian-format";
 
 const chartConfig = {
@@ -100,15 +94,15 @@ export default function LocationAnalyticsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Location Analytics</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Location Analytics</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Geographic distribution of KYC verifications.
                     </p>
                 </div>
                 <Select value={regionFilter} onValueChange={setRegionFilter}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-full sm:w-40">
                         <SelectValue placeholder="Region" />
                     </SelectTrigger>
                     <SelectContent>
@@ -123,54 +117,41 @@ export default function LocationAnalyticsPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Verifications</CardTitle>
-                        <Globe className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold">{totalVerifications.toLocaleString()}</p>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <TrendingUp className="h-3 w-3 text-green-500" />
-                            <span className="text-green-500">+12.5%</span> from last month
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">States/UTs Active</CardTitle>
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold">{filteredStats.length}</p>
-                        <p className="text-xs text-muted-foreground">
-                            Across {regions.length} zones
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Avg. Success Rate</CardTitle>
-                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold">{avgSuccessRate.toFixed(1)}%</p>
-                        <Progress value={avgSuccessRate} className="mt-2 h-2" />
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Top State</CardTitle>
-                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold">{topCountry?.country}</p>
-                        <p className="text-xs text-muted-foreground">
-                            {formatIndianNumber(topCountry?.verifications || 0)} verifications
-                        </p>
-                    </CardContent>
-                </Card>
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+                <KPICard
+                    title="Total Verifications"
+                    value={totalVerifications}
+                    badge="+12.5%"
+                    badgeVariant="success"
+                    trend="up"
+                    description="Strong regional coverage"
+                    subtitle="Compared to last month"
+                />
+                <KPICard
+                    title="States/UTs Active"
+                    value={filteredStats.length}
+                    badge="All India"
+                    badgeVariant="info"
+                    description="Geographic spread"
+                    subtitle={`Across ${regions.length} zones`}
+                />
+                <KPICard
+                    title="Avg. Success Rate"
+                    value={avgSuccessRate.toFixed(1)}
+                    suffix="%"
+                    badge={avgSuccessRate >= 90 ? "Excellent" : "Good"}
+                    badgeVariant={avgSuccessRate >= 90 ? "success" : "warning"}
+                    description="Across all states"
+                    subtitle="Target: 95%"
+                />
+                <KPICard
+                    title="Top State"
+                    value={topCountry?.country || "N/A"}
+                    badge="#1"
+                    badgeVariant="default"
+                    description="Highest volume"
+                    subtitle={`${formatIndianNumber(topCountry?.verifications || 0)} verifications`}
+                />
             </div>
 
             <Tabs defaultValue="overview" className="space-y-4">
@@ -188,8 +169,8 @@ export default function LocationAnalyticsPage() {
                             <CardTitle>India Verification Heatmap</CardTitle>
                             <CardDescription>Real-time state-wise distribution of identity verifications</CardDescription>
                         </CardHeader>
-                        <CardContent className="p-0">
-                            <IndiaMap data={filteredStats.map(s => ({ state: s.country, verifications: s.verifications, successRate: s.successRate }))} />
+                        <CardContent className="p-0 relative">
+                            <IndiaMapMapcn data={filteredStats.map(s => ({ state: s.country, verifications: s.verifications, successRate: s.successRate }))} />
                         </CardContent>
                     </Card>
 
@@ -202,18 +183,21 @@ export default function LocationAnalyticsPage() {
                             </CardHeader>
                             <CardContent>
                                 <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                                    <BarChart data={barChartData} layout="vertical">
-                                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                                        <XAxis type="number" className="text-xs" />
+                                    <BarChart data={barChartData} layout="vertical" barCategoryGap="16%">
+                                        <CartesianGrid horizontal={false} strokeDasharray="3 3" className="stroke-muted" />
+                                        <XAxis type="number" className="text-xs" tickLine={false} axisLine={false} />
                                         <YAxis
                                             dataKey="country"
                                             type="category"
                                             className="text-xs"
-                                            width={100}
-                                            tickFormatter={(value) => value.length > 12 ? value.slice(0, 12) + '...' : value}
+                                            width={90}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickMargin={8}
+                                            tickFormatter={(value) => value.length > 10 ? value.slice(0, 10) + '...' : value}
                                         />
                                         <ChartTooltip content={<ChartTooltipContent />} />
-                                        <Bar dataKey="verifications" fill="var(--color-verifications)" radius={4} />
+                                        <Bar dataKey="verifications" fill="var(--color-verifications)" radius={[0, 4, 4, 0]} maxBarSize={24} />
                                     </BarChart>
                                 </ChartContainer>
                             </CardContent>
@@ -263,44 +247,51 @@ export default function LocationAnalyticsPage() {
 
                 {/* Countries Tab */}
                 <TabsContent value="countries" className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {filteredStats.map((stat) => (
-                            <Card key={stat.country} className="relative overflow-hidden">
-                                <div
-                                    className="absolute top-0 left-0 right-0 h-1"
-                                    style={{ backgroundColor: ZONE_COLORS[stat.region as keyof typeof ZONE_COLORS] || "#6b7280" }}
-                                />
-                                <CardHeader className="pb-2">
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="text-lg">{stat.country}</CardTitle>
-                                        <Badge variant="secondary" className="text-xs">
-                                            {stat.region}
-                                        </Badge>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Verifications</p>
-                                            <p className="text-xl font-bold">{stat.verifications.toLocaleString()}</p>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {filteredStats
+                            .sort((a, b) => b.verifications - a.verifications)
+                            .map((stat, index) => (
+                            <div
+                                key={stat.country}
+                                className="group relative rounded-xl border bg-card p-4 transition-all hover:shadow-md hover:border-primary/20"
+                            >
+                                {/* Rank Badge */}
+                                <div className="absolute -top-2 -left-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground shadow-sm">
+                                    {index + 1}
+                                </div>
+
+                                {/* Header */}
+                                <div className="flex items-start justify-between mb-4 pt-1">
+                                    <div className="space-y-1">
+                                        <h3 className="font-semibold leading-none tracking-tight">
+                                            {stat.country}
+                                        </h3>
+                                        <div className="flex items-center gap-1.5">
+                                            <div
+                                                className="h-2 w-2 rounded-full"
+                                                style={{ backgroundColor: ZONE_COLORS[stat.region as keyof typeof ZONE_COLORS] || "#6b7280" }}
+                                            />
+                                            <span className="text-xs text-muted-foreground">{stat.region}</span>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Success Rate</p>
-                                            <p className={`text-xl font-bold ${stat.successRate >= 90 ? "text-green-500" : stat.successRate >= 85 ? "text-yellow-500" : "text-red-500"}`}>
-                                                {stat.successRate}%
-                                            </p>
-                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                        <Clock className="h-3 w-3" />
-                                        <span>Avg. {Math.round(stat.avgTime / 60)} min per verification</span>
+                                    <div className={`text-right ${stat.successRate >= 90 ? "text-emerald-500" : stat.successRate >= 85 ? "text-amber-500" : "text-red-500"}`}>
+                                        <p className="text-2xl font-bold tabular-nums">{stat.successRate}%</p>
+                                        <p className="text-[10px] uppercase tracking-wider opacity-70">Success</p>
                                     </div>
-                                    <Progress
-                                        value={stat.successRate}
-                                        className="h-1"
-                                    />
-                                </CardContent>
-                            </Card>
+                                </div>
+
+                                {/* Stats Row */}
+                                <div className="flex items-center justify-between border-t pt-3">
+                                    <div>
+                                        <p className="text-lg font-semibold tabular-nums">{stat.verifications.toLocaleString()}</p>
+                                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Verifications</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-medium tabular-nums">{Math.round(stat.avgTime / 60)}m</p>
+                                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Time</p>
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </TabsContent>

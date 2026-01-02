@@ -24,6 +24,9 @@ import {
     FileCheck,
     Building2,
     CheckSquare,
+    Smartphone,
+    AlertTriangle,
+    TrendingDown,
 } from "lucide-react"
 
 import {
@@ -117,6 +120,10 @@ const adminNavItems = [
         roles: ["admin"],
         items: [
             { title: "Location Analytics", url: "/analytics/location", icon: MapPin },
+            { title: "Device Analytics", url: "/analytics/device", icon: Smartphone },
+            { title: "Onboarding Dashboard", url: "/analytics/onboarding", icon: UserPlus2 },
+            { title: "KYC Failures", url: "/analytics/kyc-failures", icon: AlertTriangle },
+            { title: "Onboarding Failures", url: "/analytics/onboarding-failures", icon: TrendingDown },
         ],
     },
 ]

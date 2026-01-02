@@ -14,10 +14,6 @@ import {
     Shield,
     Bot,
     User,
-    Sparkles,
-    Zap,
-    Users,
-    Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -107,130 +103,73 @@ export default function VideoKYCPage() {
             </div>
 
             {/* VKYC Type Selection */}
-            <Card className="border-primary/20">
-                <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center gap-2">
-                        <Video className="h-4 w-4" />
-                        Choose Your Verification Method
-                    </CardTitle>
-                    <CardDescription>Select how you would like to complete your video KYC</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <RadioGroup
-                        value={vkycType || ""}
-                        onValueChange={(value) => setVkycType(value as VKYCType)}
-                        className="grid gap-4"
+            <div className="space-y-3">
+                <p className="text-sm font-medium">Choose Verification Method</p>
+                <RadioGroup
+                    value={vkycType || ""}
+                    onValueChange={(value) => setVkycType(value as VKYCType)}
+                    className="grid gap-3"
+                >
+                    {/* AI Agent Option */}
+                    <Label
+                        htmlFor="ai_agent"
+                        className={cn(
+                            "cursor-pointer flex items-center gap-4 rounded-xl border p-4 transition-all",
+                            vkycType === "ai_agent"
+                                ? "border-violet-500 bg-violet-500/5 ring-1 ring-violet-500"
+                                : "border-border hover:border-violet-500/30 hover:bg-muted/50"
+                        )}
                     >
-                        {/* AI Agent Option */}
-                        <Label
-                            htmlFor="ai_agent"
-                            className={cn(
-                                "cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
-                                vkycType === "ai_agent"
-                                    ? "border-primary bg-primary/5"
-                                    : "border-border"
-                            )}
-                        >
-                            <div className="flex items-start gap-4">
-                                <RadioGroupItem value="ai_agent" id="ai_agent" className="mt-1" />
-                                <div className="flex-1 space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                                            <Bot className="h-5 w-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold">AI Agent VKYC</span>
-                                                <Badge className="bg-gradient-to-r from-violet-500 to-purple-600 text-white text-xs">
-                                                    <Sparkles className="h-3 w-3 mr-1" />
-                                                    New
-                                                </Badge>
-                                            </div>
-                                            <p className="text-xs text-muted-foreground">Powered by Advanced AI</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2 text-xs pt-2">
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Zap className="h-3.5 w-3.5 text-yellow-500" />
-                                            <span>Instant verification</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Clock className="h-3.5 w-3.5 text-green-500" />
-                                            <span>No wait time</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Calendar className="h-3.5 w-3.5 text-blue-500" />
-                                            <span>24/7 available</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Shield className="h-3.5 w-3.5 text-primary" />
-                                            <span>RBI compliant</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground pt-1">
-                                        Our AI agent will guide you through the verification process automatically.
-                                        Quick, efficient, and available round the clock.
-                                    </p>
-                                </div>
+                        <RadioGroupItem value="ai_agent" id="ai_agent" className="sr-only" />
+                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <Bot className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium">AI Agent</span>
+                                <Badge className="bg-violet-500 text-white text-[10px] px-1.5 py-0 h-4">New</Badge>
                             </div>
-                        </Label>
+                            <p className="text-sm text-muted-foreground">Instant verification • Available 24/7</p>
+                        </div>
+                        <div className={cn(
+                            "h-5 w-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors",
+                            vkycType === "ai_agent"
+                                ? "border-violet-500 bg-violet-500"
+                                : "border-muted-foreground/30"
+                        )}>
+                            {vkycType === "ai_agent" && <CheckCircle2 className="h-3 w-3 text-white" />}
+                        </div>
+                    </Label>
 
-                        {/* Human Agent Option */}
-                        <Label
-                            htmlFor="human_agent"
-                            className={cn(
-                                "cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
-                                vkycType === "human_agent"
-                                    ? "border-primary bg-primary/5"
-                                    : "border-border"
-                            )}
-                        >
-                            <div className="flex items-start gap-4">
-                                <RadioGroupItem value="human_agent" id="human_agent" className="mt-1" />
-                                <div className="flex-1 space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
-                                            <User className="h-5 w-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold">Live Agent VKYC</span>
-                                                <Badge variant="secondary" className="text-xs">
-                                                    <Users className="h-3 w-3 mr-1" />
-                                                    Human Expert
-                                                </Badge>
-                                            </div>
-                                            <p className="text-xs text-muted-foreground">Personal video call with KYC specialist</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2 text-xs pt-2">
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Users className="h-3.5 w-3.5 text-blue-500" />
-                                            <span>Human interaction</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Clock className="h-3.5 w-3.5 text-yellow-500" />
-                                            <span>~5 min wait time</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                                            <span>9 AM - 9 PM IST</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                                            <Shield className="h-3.5 w-3.5 text-primary" />
-                                            <span>RBI V-CIP compliant</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground pt-1">
-                                        A trained KYC specialist will conduct your verification via live video call.
-                                        Ideal if you prefer personal assistance.
-                                    </p>
-                                </div>
-                            </div>
-                        </Label>
-                    </RadioGroup>
-                </CardContent>
-            </Card>
+                    {/* Human Agent Option */}
+                    <Label
+                        htmlFor="human_agent"
+                        className={cn(
+                            "cursor-pointer flex items-center gap-4 rounded-xl border p-4 transition-all",
+                            vkycType === "human_agent"
+                                ? "border-blue-500 bg-blue-500/5 ring-1 ring-blue-500"
+                                : "border-border hover:border-blue-500/30 hover:bg-muted/50"
+                        )}
+                    >
+                        <RadioGroupItem value="human_agent" id="human_agent" className="sr-only" />
+                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
+                            <User className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <span className="font-medium">Live Agent</span>
+                            <p className="text-sm text-muted-foreground">Video call with expert • ~5 min wait</p>
+                        </div>
+                        <div className={cn(
+                            "h-5 w-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors",
+                            vkycType === "human_agent"
+                                ? "border-blue-500 bg-blue-500"
+                                : "border-muted-foreground/30"
+                        )}>
+                            {vkycType === "human_agent" && <CheckCircle2 className="h-3 w-3 text-white" />}
+                        </div>
+                    </Label>
+                </RadioGroup>
+            </div>
 
             {/* Show details based on selection */}
             {vkycType && (

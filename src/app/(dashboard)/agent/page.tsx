@@ -2,15 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import {
-    TrendingUp,
-    TrendingDown,
-    CheckCircle,
-    Clock,
-    Star,
-    Users,
-    ArrowRight,
-} from "lucide-react";
+import { Users, ArrowRight } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,52 +15,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { KPICard } from "@/components/kpi-card";
 import { AgentStatusControl, AgentStatus } from "@/components/agent/status-control";
 import { getAgentKPIs, mockQueueItems, mockVideoSessions } from "@/lib/mock-data";
 import { AgentKPIs } from "@/types";
-
-function KPICard({
-    title,
-    value,
-    changePercentage,
-    trend,
-    icon: Icon,
-    suffix = "",
-}: {
-    title: string;
-    value: number;
-    changePercentage: number;
-    trend: "up" | "down" | "neutral";
-    icon: React.ComponentType<{ className?: string }>;
-    suffix?: string;
-}) {
-    const isPositive = trend === "up";
-
-    return (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">
-                    {typeof value === "number" && value % 1 !== 0 ? value.toFixed(1) : value}{suffix}
-                </div>
-                <div className="flex items-center text-xs text-muted-foreground">
-                    {isPositive ? (
-                        <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                    ) : (
-                        <TrendingDown className="mr-1 h-3 w-3 text-red-500" />
-                    )}
-                    <span className={isPositive ? "text-green-500" : "text-red-500"}>
-                        {changePercentage > 0 ? "+" : ""}{changePercentage}%
-                    </span>
-                    <span className="ml-1">from yesterday</span>
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
 
 function formatDuration(seconds: number): string {
     const mins = Math.floor(seconds / 60);
@@ -136,7 +86,7 @@ export default function AgentDashboardPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agent Dashboard</h1>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Welcome back! Here&apos;s your performance overview.
                     </p>
                 </div>
@@ -147,37 +97,45 @@ export default function AgentDashboardPage() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 <KPICard
                     title="Today's Verifications"
                     value={kpis.todayVerifications.value}
-                    changePercentage={kpis.todayVerifications.changePercentage}
+                    badge={`${kpis.todayVerifications.changePercentage > 0 ? "+" : ""}${kpis.todayVerifications.changePercentage}%`}
+                    badgeVariant={kpis.todayVerifications.trend === "up" ? "success" : "danger"}
                     trend={kpis.todayVerifications.trend}
-                    icon={CheckCircle}
+                    description={kpis.todayVerifications.trend === "up" ? "Great productivity" : "Below average"}
+                    subtitle="Compared to yesterday"
                 />
                 <KPICard
                     title="Approval Rate"
                     value={kpis.approvalRate.value}
-                    changePercentage={kpis.approvalRate.changePercentage}
+                    badge={`${kpis.approvalRate.changePercentage > 0 ? "+" : ""}${kpis.approvalRate.changePercentage}%`}
+                    badgeVariant={kpis.approvalRate.trend === "up" ? "success" : "danger"}
                     trend={kpis.approvalRate.trend}
-                    icon={TrendingUp}
                     suffix="%"
+                    description={kpis.approvalRate.trend === "up" ? "Above team average" : "Below team average"}
+                    subtitle="Team avg: 85%"
                 />
                 <KPICard
                     title="Avg. Session Duration"
                     value={Math.round(kpis.avgSessionDuration.value / 60)}
-                    changePercentage={kpis.avgSessionDuration.changePercentage}
+                    badge={`${kpis.avgSessionDuration.changePercentage > 0 ? "+" : ""}${kpis.avgSessionDuration.changePercentage}%`}
+                    badgeVariant={kpis.avgSessionDuration.trend === "down" ? "success" : "danger"}
                     trend={kpis.avgSessionDuration.trend}
-                    icon={Clock}
                     suffix=" min"
+                    description={kpis.avgSessionDuration.trend === "down" ? "Efficient processing" : "Taking longer"}
+                    subtitle="Per session"
                 />
                 <KPICard
                     title="Customer Satisfaction"
                     value={kpis.customerSatisfaction.value}
-                    changePercentage={kpis.customerSatisfaction.changePercentage}
+                    badge={`${kpis.customerSatisfaction.changePercentage > 0 ? "+" : ""}${kpis.customerSatisfaction.changePercentage}%`}
+                    badgeVariant={kpis.customerSatisfaction.trend === "up" ? "success" : "danger"}
                     trend={kpis.customerSatisfaction.trend}
-                    icon={Star}
                     suffix="/5"
+                    description={kpis.customerSatisfaction.trend === "up" ? "Excellent feedback" : "Needs improvement"}
+                    subtitle="Based on reviews"
                 />
             </div>
 

@@ -3,56 +3,15 @@
 import * as React from "react";
 import {
     TrendingUp,
-    Users,
-    UserCheck,
     Activity,
-    Clock,
     AlertCircle,
 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { KPICard } from "@/components/kpi-card";
 import { getAdminKPIs, activityFeed, mockAgents } from "@/lib/mock-data";
 import { AdminKPIs } from "@/types";
-
-function KPICard({
-    title,
-    value,
-    changePercentage,
-    trend,
-    icon: Icon,
-    suffix = "",
-    extra = "",
-}: {
-    title: string;
-    value: number;
-    changePercentage: number;
-    trend: "up" | "down" | "neutral";
-    icon: React.ComponentType<{ className?: string }>;
-    suffix?: string;
-    extra?: string;
-}) {
-    return (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">
-                    {typeof value === "number" && value % 1 !== 0 ? value.toFixed(1) : value}{suffix}
-                </div>
-                {extra && <p className="text-xs text-muted-foreground">{extra}</p>}
-                <p className="text-xs text-muted-foreground">
-                    <span className={trend === "up" ? "text-green-500" : trend === "down" ? "text-red-500" : ""}>
-                        {changePercentage > 0 ? "+" : ""}{changePercentage}%
-                    </span>
-                    {" "}from yesterday
-                </p>
-            </CardContent>
-        </Card>
-    );
-}
 
 function formatTimeAgo(date: Date): string {
     const now = new Date();
@@ -96,43 +55,50 @@ export default function AdminDashboardPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+                <p className="text-sm sm:text-base text-muted-foreground">
                     System overview and real-time monitoring.
                 </p>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 <KPICard
                     title="Total Users"
                     value={kpis.totalUsers.value}
-                    changePercentage={kpis.totalUsers.changePercentage}
+                    badge={`${kpis.totalUsers.changePercentage > 0 ? "+" : ""}${kpis.totalUsers.changePercentage}%`}
+                    badgeVariant={kpis.totalUsers.trend === "up" ? "success" : "danger"}
                     trend={kpis.totalUsers.trend}
-                    icon={Users}
+                    description={kpis.totalUsers.trend === "up" ? "User growth" : "Users declining"}
+                    subtitle="Registered accounts"
                 />
                 <KPICard
                     title="Active Agents"
                     value={kpis.activeAgents.value}
-                    changePercentage={kpis.activeAgents.changePercentage}
+                    badge={`${kpis.activeAgents.changePercentage > 0 ? "+" : ""}${kpis.activeAgents.changePercentage}%`}
+                    badgeVariant={kpis.activeAgents.trend === "up" ? "success" : "danger"}
                     trend={kpis.activeAgents.trend}
-                    icon={UserCheck}
-                    extra={`${onlineAgentsCount} online, ${offlineAgentsCount} offline`}
+                    description={`${onlineAgentsCount} online, ${offlineAgentsCount} offline`}
+                    subtitle="Currently available"
                 />
                 <KPICard
                     title="Queue Length"
                     value={kpis.currentQueueLength.value}
-                    changePercentage={kpis.currentQueueLength.changePercentage}
+                    badge={`${kpis.currentQueueLength.changePercentage > 0 ? "+" : ""}${kpis.currentQueueLength.changePercentage}%`}
+                    badgeVariant={kpis.currentQueueLength.trend === "down" ? "success" : "warning"}
                     trend={kpis.currentQueueLength.trend}
-                    icon={Clock}
+                    description={kpis.currentQueueLength.trend === "down" ? "Queue clearing" : "Queue building up"}
+                    subtitle="Pending verifications"
                 />
                 <KPICard
                     title="System Health"
                     value={kpis.systemHealth.value}
-                    changePercentage={kpis.systemHealth.changePercentage}
-                    trend={kpis.systemHealth.trend}
-                    icon={Activity}
                     suffix="%"
+                    badge={kpis.systemHealth.value >= 95 ? "Healthy" : "Degraded"}
+                    badgeVariant={kpis.systemHealth.value >= 95 ? "success" : "warning"}
+                    trend={kpis.systemHealth.trend}
+                    description="All systems operational"
+                    subtitle="Uptime this month"
                 />
             </div>
 

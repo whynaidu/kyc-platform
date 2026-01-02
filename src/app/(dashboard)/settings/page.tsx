@@ -95,12 +95,37 @@ export default function SettingsPage() {
 
     const applyAccentColor = React.useCallback((colorValue: string) => {
         const color = accentColors.find(c => c.value === colorValue);
-        if (color && color.value !== "default" && color.color) {
+        if (color && color.value !== "neutral" && color.color) {
             document.documentElement.style.setProperty("--primary", color.color);
             document.documentElement.style.setProperty("--primary-foreground", color.fg);
+
+            // Extract hue from the color (oklch format: oklch(L C H))
+            const hueMatch = color.color.match(/oklch\([\d.]+ [\d.]+ ([\d.]+)\)/);
+            const hue = hueMatch ? parseFloat(hueMatch[1]) : 250;
+
+            // Generate chart colors based on the accent hue
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.style.setProperty("--chart-1", `oklch(0.65 0.14 ${hue})`);
+                document.documentElement.style.setProperty("--chart-2", `oklch(0.72 0.11 ${(hue + 40) % 360})`);
+                document.documentElement.style.setProperty("--chart-3", `oklch(0.58 0.09 ${(hue + 80) % 360})`);
+                document.documentElement.style.setProperty("--chart-4", `oklch(0.68 0.07 ${(hue + 120) % 360})`);
+                document.documentElement.style.setProperty("--chart-5", `oklch(0.55 0.05 ${(hue + 160) % 360})`);
+            } else {
+                document.documentElement.style.setProperty("--chart-1", `oklch(0.55 0.16 ${hue})`);
+                document.documentElement.style.setProperty("--chart-2", `oklch(0.62 0.13 ${(hue + 40) % 360})`);
+                document.documentElement.style.setProperty("--chart-3", `oklch(0.48 0.10 ${(hue + 80) % 360})`);
+                document.documentElement.style.setProperty("--chart-4", `oklch(0.58 0.08 ${(hue + 120) % 360})`);
+                document.documentElement.style.setProperty("--chart-5", `oklch(0.45 0.06 ${(hue + 160) % 360})`);
+            }
         } else {
             document.documentElement.style.removeProperty("--primary");
             document.documentElement.style.removeProperty("--primary-foreground");
+            document.documentElement.style.removeProperty("--chart-1");
+            document.documentElement.style.removeProperty("--chart-2");
+            document.documentElement.style.removeProperty("--chart-3");
+            document.documentElement.style.removeProperty("--chart-4");
+            document.documentElement.style.removeProperty("--chart-5");
         }
     }, []);
 
@@ -118,6 +143,13 @@ export default function SettingsPage() {
             setVkycConfig(JSON.parse(savedVkycConfig));
         }
     }, [applyAccentColor]);
+
+    // Reapply accent color when theme changes to update chart colors for light/dark mode
+    React.useEffect(() => {
+        if (mounted && accentColor && accentColor !== "neutral") {
+            applyAccentColor(accentColor);
+        }
+    }, [theme, mounted, accentColor, applyAccentColor]);
 
     const handleAccentChange = (value: string) => {
         setAccentColor(value);

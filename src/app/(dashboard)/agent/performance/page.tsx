@@ -15,7 +15,8 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, Line, LineChart, XAxis, YAxis, CartesianGrid } from "recharts";
+import { KPICard } from "@/components/kpi-card";
+import { Bar, BarChart, Area, AreaChart, XAxis, YAxis, CartesianGrid } from "recharts";
 import {
     Table,
     TableBody,
@@ -70,15 +71,15 @@ export default function AgentPerformancePage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Performance</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Performance</h1>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                         Track your verification performance metrics.
                     </p>
                 </div>
                 <Select value={timeRange} onValueChange={setTimeRange}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-full sm:w-40">
                         <SelectValue placeholder="Time range" />
                     </SelectTrigger>
                     <SelectContent>
@@ -90,31 +91,33 @@ export default function AgentPerformancePage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Total Verifications</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">{stats.totalVerifications}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Avg. Session Duration</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">{stats.avgDuration} min</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Avg. Approval Rate</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-3xl font-bold">{stats.avgApprovalRate}%</p>
-                    </CardContent>
-                </Card>
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
+                <KPICard
+                    title="Total Verifications"
+                    value={stats.totalVerifications}
+                    badge={`This ${timeRange}`}
+                    badgeVariant="success"
+                    description="Completed sessions"
+                    subtitle="All verification types"
+                />
+                <KPICard
+                    title="Avg. Session Duration"
+                    value={stats.avgDuration}
+                    suffix=" min"
+                    badge="Per session"
+                    badgeVariant="info"
+                    description="Time per verification"
+                    subtitle="Target: 5 min"
+                />
+                <KPICard
+                    title="Avg. Approval Rate"
+                    value={stats.avgApprovalRate}
+                    suffix="%"
+                    badge={stats.avgApprovalRate >= 85 ? "On target" : "Below target"}
+                    badgeVariant={stats.avgApprovalRate >= 85 ? "success" : "warning"}
+                    description="Success rate"
+                    subtitle="Target: 85%"
+                />
             </div>
 
             {/* Charts */}
@@ -127,18 +130,20 @@ export default function AgentPerformancePage() {
                     </CardHeader>
                     <CardContent className="px-2 sm:px-6">
                         <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
-                            <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                            <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barCategoryGap="20%">
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                                     className="text-xs"
                                     tick={{ fontSize: 10 }}
+                                    tickLine={false}
+                                    axisLine={false}
                                     interval="preserveStartEnd"
                                 />
-                                <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} />
+                                <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} tickLine={false} axisLine={false} />
                                 <ChartTooltip content={<ChartTooltipContent />} />
-                                <Bar dataKey="verifications" fill="var(--color-verifications)" radius={4} />
+                                <Bar dataKey="verifications" fill="var(--color-verifications)" radius={[4, 4, 0, 0]} maxBarSize={32} />
                             </BarChart>
                         </ChartContainer>
                     </CardContent>
@@ -152,7 +157,13 @@ export default function AgentPerformancePage() {
                     </CardHeader>
                     <CardContent className="px-2 sm:px-6">
                         <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
-                            <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="durationGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="var(--color-duration)" stopOpacity={0.4} />
+                                        <stop offset="100%" stopColor="var(--color-duration)" stopOpacity={0.05} />
+                                    </linearGradient>
+                                </defs>
                                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                                 <XAxis
                                     dataKey="date"
@@ -163,8 +174,14 @@ export default function AgentPerformancePage() {
                                 />
                                 <YAxis className="text-xs" tick={{ fontSize: 10 }} width={35} />
                                 <ChartTooltip content={<ChartTooltipContent />} />
-                                <Line type="monotone" dataKey="duration" stroke="var(--color-duration)" strokeWidth={2} dot={false} />
-                            </LineChart>
+                                <Area
+                                    type="monotone"
+                                    dataKey="duration"
+                                    stroke="var(--color-duration)"
+                                    strokeWidth={2}
+                                    fill="url(#durationGradient)"
+                                />
+                            </AreaChart>
                         </ChartContainer>
                     </CardContent>
                 </Card>
@@ -178,7 +195,13 @@ export default function AgentPerformancePage() {
                 </CardHeader>
                 <CardContent className="px-2 sm:px-6">
                     <ChartContainer config={chartConfig} className="h-[200px] sm:h-[250px] w-full">
-                        <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <defs>
+                                <linearGradient id="approvalRateGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="var(--color-approvalRate)" stopOpacity={0.4} />
+                                    <stop offset="100%" stopColor="var(--color-approvalRate)" stopOpacity={0.05} />
+                                </linearGradient>
+                            </defs>
                             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                             <XAxis
                                 dataKey="date"
@@ -189,8 +212,14 @@ export default function AgentPerformancePage() {
                             />
                             <YAxis domain={[0, 100]} className="text-xs" tick={{ fontSize: 10 }} width={35} />
                             <ChartTooltip content={<ChartTooltipContent />} />
-                            <Line type="monotone" dataKey="approvalRate" stroke="var(--color-approvalRate)" strokeWidth={2} dot={false} />
-                        </LineChart>
+                            <Area
+                                type="monotone"
+                                dataKey="approvalRate"
+                                stroke="var(--color-approvalRate)"
+                                strokeWidth={2}
+                                fill="url(#approvalRateGradient)"
+                            />
+                        </AreaChart>
                     </ChartContainer>
                 </CardContent>
             </Card>

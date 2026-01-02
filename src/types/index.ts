@@ -224,3 +224,141 @@ export interface UserFormData {
   phone?: string;
   address?: string;
 }
+
+// ============================================
+// Device Analytics Types
+// ============================================
+
+export type DeviceType = 'mobile' | 'desktop' | 'tablet';
+
+export interface DeviceStats {
+  deviceType: DeviceType;
+  count: number;
+  successRate: number;
+  avgCompletionTime: number;
+}
+
+export type OSType = 'iOS' | 'Android' | 'Windows' | 'macOS' | 'Linux' | 'Other';
+
+export interface OSStats {
+  os: OSType;
+  count: number;
+  successRate: number;
+  avgCompletionTime: number;
+}
+
+export type BrowserType = 'Chrome' | 'Safari' | 'Firefox' | 'Edge' | 'Other';
+
+export interface BrowserStats {
+  browser: BrowserType;
+  count: number;
+  successRate: number;
+  compatibilityIssues: number;
+  commonIssues: string[];
+}
+
+export type NetworkType = '5G' | '4G' | '3G' | 'WiFi' | 'Ethernet' | 'Unknown';
+
+export interface NetworkStats {
+  networkType: NetworkType;
+  count: number;
+  avgLatency: number;
+  dropoutRate: number;
+  avgCompletionTime: number;
+}
+
+// ============================================
+// Onboarding Analytics Types
+// ============================================
+
+export type OnboardingStep = 'mobile' | 'identity' | 'video_kyc' | 'address' | 'bank' | 'review';
+
+export interface OnboardingFunnelStep {
+  step: OnboardingStep;
+  stepNumber: number;
+  label: string;
+  started: number;
+  completed: number;
+  dropoffs: number;
+  avgTimeSeconds: number;
+}
+
+export interface OnboardingDailyMetrics {
+  date: string;
+  started: number;
+  completed: number;
+  avgTotalTimeMinutes: number;
+  conversionRate: number;
+}
+
+export interface OnboardingKPIs {
+  totalStarted: KPIData;
+  conversionRate: KPIData;
+  avgCompletionTime: KPIData;
+  dropoffRate: KPIData;
+}
+
+// ============================================
+// KYC Failure Analytics Types
+// ============================================
+
+export type KYCFailureStep = 'face_liveness' | 'face_match' | 'handwriting' | 'location' | 'video_kyc';
+
+export interface KYCFailureReason {
+  reason: string;
+  count: number;
+  percentage: number;
+}
+
+export interface KYCStepFailure {
+  step: KYCFailureStep;
+  label: string;
+  totalAttempts: number;
+  failures: number;
+  failureRate: number;
+  topReasons: KYCFailureReason[];
+}
+
+export interface KYCFailureTimePattern {
+  hour: number;
+  failures: number;
+  total: number;
+}
+
+export interface KYCRetryPattern {
+  attempts: number;
+  count: number;
+  eventualSuccessRate: number;
+}
+
+export interface KYCFailureKPIs {
+  totalFailures: KPIData;
+  highestFailureStep: { step: string; rate: number };
+  retrySuccessRate: KPIData;
+  peakFailureHour: number;
+}
+
+// ============================================
+// Onboarding Failure Analytics Types
+// ============================================
+
+export interface OnboardingStepFailure {
+  step: OnboardingStep;
+  label: string;
+  dropoffs: number;
+  dropoffRate: number;
+  topReasons: { reason: string; count: number; percentage: number }[];
+}
+
+export interface OnboardingDropoffTiming {
+  timeRange: string;
+  count: number;
+  percentage: number;
+}
+
+export interface OnboardingFailureKPIs {
+  totalDropoffs: KPIData;
+  highestDropoffStep: { step: string; rate: number };
+  avgDropoffTime: KPIData;
+  recoveryRate: KPIData;
+}

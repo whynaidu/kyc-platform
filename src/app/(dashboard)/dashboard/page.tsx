@@ -1,14 +1,8 @@
 "use client";
 
 import * as React from "react";
-import {
-    TrendingUp,
-    TrendingDown,
-    CheckCircle,
-    XCircle,
-    Clock,
-    Activity,
-} from "lucide-react";
+import Link from "next/link";
+import { Smartphone, UserPlus2, AlertTriangle, TrendingDown, ArrowRight } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,8 +20,18 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
+import { KPICard } from "@/components/kpi-card";
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Cell } from "recharts";
-import { getDashboardKPIs, getVerificationTrends, getMethodDistribution, activityFeed } from "@/lib/mock-data";
+import {
+    getDashboardKPIs,
+    getVerificationTrends,
+    getMethodDistribution,
+    activityFeed,
+    getDeviceKPIs,
+    getOnboardingKPIs,
+    getKYCFailureKPIs,
+    getOnboardingFailureKPIs,
+} from "@/lib/mock-data";
 import { DashboardKPIs } from "@/types";
 
 interface TrendData {
@@ -52,49 +56,6 @@ const chartConfig = {
         color: "var(--destructive)",
     },
 } satisfies ChartConfig;
-
-function KPICard({
-    title,
-    value,
-    changePercentage,
-    trend,
-    icon: Icon,
-    suffix = "",
-}: {
-    title: string;
-    value: number;
-    changePercentage: number;
-    trend: "up" | "down" | "neutral";
-    icon: React.ComponentType<{ className?: string }>;
-    suffix?: string;
-}) {
-    const isPositive = trend === "up";
-
-    return (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">
-                    {typeof value === "number" && value % 1 !== 0 ? value.toFixed(1) : value}{suffix}
-                </div>
-                <div className="flex items-center text-xs text-muted-foreground">
-                    {isPositive ? (
-                        <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                    ) : (
-                        <TrendingDown className="mr-1 h-3 w-3 text-red-500" />
-                    )}
-                    <span className={isPositive ? "text-green-500" : "text-red-500"}>
-                        {changePercentage > 0 ? "+" : ""}{changePercentage}%
-                    </span>
-                    <span className="ml-1">from yesterday</span>
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
 
 function getStatusBadge(type: string) {
     switch (type) {
@@ -130,6 +91,12 @@ export default function DashboardPage() {
     const [trends, setTrends] = React.useState<TrendData[]>([]);
     const [distribution, setDistribution] = React.useState<DistributionData[]>([]);
 
+    // Analytics data
+    const deviceKPIs = getDeviceKPIs();
+    const onboardingKPIs = getOnboardingKPIs();
+    const kycFailureKPIs = getKYCFailureKPIs();
+    const onboardingFailureKPIs = getOnboardingFailureKPIs();
+
     React.useEffect(() => {
         setKPIs(getDashboardKPIs());
         setTrends(getVerificationTrends(14));
@@ -143,43 +110,51 @@ export default function DashboardPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                <p className="text-sm sm:text-base text-muted-foreground">
                     Welcome back! Here&apos;s an overview of your KYC operations.
                 </p>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 <KPICard
                     title="Total Verifications"
                     value={kpis.totalVerifications.value}
-                    changePercentage={kpis.totalVerifications.changePercentage}
+                    badge={`${kpis.totalVerifications.changePercentage > 0 ? "+" : ""}${kpis.totalVerifications.changePercentage}%`}
+                    badgeVariant={kpis.totalVerifications.trend === "up" ? "success" : "danger"}
                     trend={kpis.totalVerifications.trend}
-                    icon={Activity}
+                    description={kpis.totalVerifications.trend === "up" ? "Strong verification volume" : "Volume needs attention"}
+                    subtitle="Compared to yesterday"
                 />
                 <KPICard
                     title="Success Rate"
                     value={kpis.successRate.value}
-                    changePercentage={kpis.successRate.changePercentage}
+                    badge={`${kpis.successRate.changePercentage > 0 ? "+" : ""}${kpis.successRate.changePercentage}%`}
+                    badgeVariant={kpis.successRate.trend === "up" ? "success" : "danger"}
                     trend={kpis.successRate.trend}
-                    icon={CheckCircle}
                     suffix="%"
+                    description={kpis.successRate.trend === "up" ? "Above target threshold" : "Below target threshold"}
+                    subtitle="Target: 95%"
                 />
                 <KPICard
                     title="Failed Attempts"
                     value={kpis.failedAttempts.value}
-                    changePercentage={kpis.failedAttempts.changePercentage}
+                    badge={`${kpis.failedAttempts.changePercentage > 0 ? "+" : ""}${kpis.failedAttempts.changePercentage}%`}
+                    badgeVariant={kpis.failedAttempts.trend === "down" ? "success" : "danger"}
                     trend={kpis.failedAttempts.trend}
-                    icon={XCircle}
+                    description={kpis.failedAttempts.trend === "down" ? "Failures decreasing" : "Requires investigation"}
+                    subtitle="Review flagged cases"
                 />
                 <KPICard
                     title="Avg. Completion Time"
                     value={Math.round(kpis.avgCompletionTime.value / 60)}
-                    changePercentage={kpis.avgCompletionTime.changePercentage}
+                    badge={`${kpis.avgCompletionTime.changePercentage > 0 ? "+" : ""}${kpis.avgCompletionTime.changePercentage}%`}
+                    badgeVariant={kpis.avgCompletionTime.trend === "down" ? "success" : "danger"}
                     trend={kpis.avgCompletionTime.trend}
-                    icon={Clock}
                     suffix=" min"
+                    description={kpis.avgCompletionTime.trend === "down" ? "Processing faster" : "Processing slower"}
+                    subtitle="Per verification"
                 />
             </div>
 
@@ -197,6 +172,16 @@ export default function DashboardPage() {
                                 data={trends}
                                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                             >
+                                <defs>
+                                    <linearGradient id="successfulGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="var(--color-successful)" stopOpacity={0.5} />
+                                        <stop offset="100%" stopColor="var(--color-successful)" stopOpacity={0.05} />
+                                    </linearGradient>
+                                    <linearGradient id="failedGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="var(--color-failed)" stopOpacity={0.5} />
+                                        <stop offset="100%" stopColor="var(--color-failed)" stopOpacity={0.05} />
+                                    </linearGradient>
+                                </defs>
                                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                                 <XAxis
                                     dataKey="date"
@@ -212,16 +197,16 @@ export default function DashboardPage() {
                                     dataKey="successful"
                                     stackId="1"
                                     stroke="var(--color-successful)"
-                                    fill="var(--color-successful)"
-                                    fillOpacity={0.6}
+                                    strokeWidth={2}
+                                    fill="url(#successfulGradient)"
                                 />
                                 <Area
                                     type="monotone"
                                     dataKey="failed"
                                     stackId="1"
                                     stroke="var(--color-failed)"
-                                    fill="var(--color-failed)"
-                                    fillOpacity={0.6}
+                                    strokeWidth={2}
+                                    fill="url(#failedGradient)"
                                 />
                             </AreaChart>
                         </ChartContainer>
@@ -267,6 +252,97 @@ export default function DashboardPage() {
                         </div>
                     </CardContent>
                 </Card>
+            </div>
+
+            {/* Quick Insights */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Link href="/analytics/device" className="group">
+                    <Card className="h-full transition-colors hover:bg-muted/50">
+                        <CardContent className="pt-5 pb-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
+                                        <Smartphone className="h-5 w-5 text-blue-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Mobile Usage</p>
+                                        <p className="text-2xl font-bold">{deviceKPIs.mobileShare.value}%</p>
+                                    </div>
+                                </div>
+                                <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                                {deviceKPIs.avgSuccessRate.value}% success rate across devices
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
+
+                <Link href="/analytics/onboarding" className="group">
+                    <Card className="h-full transition-colors hover:bg-muted/50">
+                        <CardContent className="pt-5 pb-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+                                        <UserPlus2 className="h-5 w-5 text-green-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Onboarding</p>
+                                        <p className="text-2xl font-bold">{onboardingKPIs.conversionRate.value}%</p>
+                                    </div>
+                                </div>
+                                <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                                Conversion rate • {onboardingKPIs.avgCompletionTime.value} min avg
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
+
+                <Link href="/analytics/kyc-failures" className="group">
+                    <Card className="h-full transition-colors hover:bg-muted/50">
+                        <CardContent className="pt-5 pb-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/10">
+                                        <AlertTriangle className="h-5 w-5 text-red-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">KYC Failures</p>
+                                        <p className="text-2xl font-bold">{kycFailureKPIs.totalFailures.value.toLocaleString()}</p>
+                                    </div>
+                                </div>
+                                <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                                Top: {kycFailureKPIs.highestFailureStep.step} ({kycFailureKPIs.highestFailureStep.rate}%)
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
+
+                <Link href="/analytics/onboarding-failures" className="group">
+                    <Card className="h-full transition-colors hover:bg-muted/50">
+                        <CardContent className="pt-5 pb-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-500/10">
+                                        <TrendingDown className="h-5 w-5 text-yellow-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Drop-offs</p>
+                                        <p className="text-2xl font-bold">{onboardingFailureKPIs.totalDropoffs.value.toLocaleString()}</p>
+                                    </div>
+                                </div>
+                                <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                                Top: {onboardingFailureKPIs.highestDropoffStep.step} ({onboardingFailureKPIs.highestDropoffStep.rate}%)
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Link>
             </div>
 
             {/* Recent Activity Table */}
